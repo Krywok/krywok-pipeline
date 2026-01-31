@@ -78,6 +78,8 @@ class Pipeline:
         self._errors: dict[str, ConditionErrors] = {}
         self._processed_data: dict = {}
 
+        self._ran_before: bool = False
+
     def run(self, data: dict) -> PipelineResult:
         """
         Runs the pipeline on the provided data.
@@ -95,6 +97,11 @@ class Pipeline:
         Returns:
             PipelineResult: A namedtuple containing the fields errors and processed_data. The processed_data field contains the final, trustworthy data and will be `None` if there are errors.
         """
+        if self._ran_before:
+            self._reset_state()
+
+        self._ran_before = True
+
         context: PipeContext = data
 
         for field, pipe_config in self.pipes_config.items():
@@ -192,6 +199,18 @@ class Pipeline:
             self.__class__.global_post_hook(hook)
 
         self._processed_data[field] = value
+
+    def _reset_state(self):
+        """
+        Resets internal state variables and execution flags.
+
+        Clears the error and processed data and resets the execution tracker to 
+        its initial state.
+        """
+        self._errors = {}
+        self._processed_data = {}
+
+        self._ran_before = False
 
     def __call__(self, func: Callable[P, F]) -> Callable[P, F]:
         """
