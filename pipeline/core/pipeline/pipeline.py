@@ -7,7 +7,8 @@ from pipeline.core.pipeline.resources.constants import (
 )
 from pipeline.core.pipeline.resources.exceptions import PipelineException
 from pipeline.core.pipeline.resources.types import (
-    PipelineHandleErrorsFunc, PipelineHookFunc, PipelinePipeConfig
+    PipelineHandleErrorsFunc, PipelineHookFunc, PipelinePipeConfig,
+    PipelineTeardownFunc
 )
 from pipeline.handlers.condition_handler.resources.types import ConditionErrors
 
@@ -28,6 +29,8 @@ class Pipeline:
     Attributes:
         global_pre_hook (ClassVar[PipelineHookFunc | None]): A function to be called before each pipe execution.
         global_post_hook (ClassVar[PipelineHookFunc | None]): A function to be called after each pipe execution.
+        global_teardown (ClassVar[PipelineTeardownFunc | None]): A function that will run after the 
+            pipeline finishes execution, even if it failed. This runs before handle_errors.
         global_handle_errors (ClassVar[PipelineHandleErrorsFunc | None]): A function to handle
             errors collected during pipeline execution. This could be used to raise exceptions,
             log errors, or format them for a response.
@@ -38,12 +41,16 @@ class Pipeline:
     global_post_hook: ClassVar[PipelineHookFunc | None] = None
     """A function to be called after each pipe execution."""
 
+    global_teardown: ClassVar[PipelineTeardownFunc | None] = None
+    """A function that will run after the pipeline finishes execution, even if it failed."""
+
     global_handle_errors: ClassVar[PipelineHandleErrorsFunc | None] = None
     """A function to handle errors collected during pipeline execution."""
     def __init__(
         self,
         pre_hook: PipelineHookFunc | None = None,
         post_hook: PipelineHookFunc | None = None,
+        teardown: PipelineTeardownFunc | None = None,
         handle_errors: PipelineHandleErrorsFunc | None = None,
         **pipes_config: PipelinePipeConfig
     ) -> None:
@@ -60,6 +67,10 @@ class Pipeline:
                 The global_pre_hook will not run if a local pre_hook is defined.
             post_hook (PipelineHookFunc | None): A function to be called after each pipe execution.
                 The global_post_hook will not run if a local pre_hook is defined.
+            teardown (PipelineTeardownFunc | None): A function that will run after the entire 
+                pipeline finishes execution. This runs before handle_errors and will execute 
+                even if the pipeline failed. The global_teardown will not run if a local 
+                teardown is defined.
             handle_errors (PipelineHandleErrorsFunc | None): A function to handle
                 errors collected during pipeline execution. This could be used to raise exceptions,
                 log errors, or format them for a response. The global_handle_errors will not run
@@ -72,6 +83,8 @@ class Pipeline:
         self.post_hook: PipelineHookFunc | None = post_hook
 
         self.handle_errors: PipelineHandleErrorsFunc | None = handle_errors
+
+        self.teardown: PipelineTeardownFunc | None = teardown
 
         self.pipes_config: dict[str, PipelinePipeConfig] = pipes_config
 
@@ -87,7 +100,10 @@ class Pipeline:
         This method iterates through the `pipes_config`. For each field, it executes
         the internal `self._process_field_pipe` method.
 
-        After processing all fields, if `handle_errors` is defined, it is called with the
+        Once the field processing is finished, if `teardown` is defined, it will run 
+        before `handle_errors` and will execute even if the pipeline failed.
+
+        After teardown, if `handle_errors` is defined, it is called with the
         collected errors.
 
         Args:
@@ -95,7 +111,9 @@ class Pipeline:
                 with transformed values.
 
         Returns:
-            PipelineResult: A namedtuple containing the fields errors and processed_data. The processed_data field contains the final, trustworthy data and will be `None` if there are errors.
+            PipelineResult: A namedtuple containing the fields errors and processed_data. 
+                The processed_data field contains the final, trustworthy data and will be `None` 
+                if there are errors.
         """
         if self._ran_before:
             self._reset_state()
@@ -111,6 +129,11 @@ class Pipeline:
                 field=field,
                 pipe_config=pipe_config
             )
+
+        if self.teardown:
+            self.teardown(self)
+        elif self.__class__.global_teardown:
+            self.__class__.global_teardown(self)
 
         if self._errors:
             error_handler = self.handle_errors or self.__class__.global_handle_errors

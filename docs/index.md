@@ -132,7 +132,7 @@ flowchart TD
     IterateFields[Iterate Over Fields] --> NextField{More Fields?}
 
     NextField -->|Yes| GetField[Get Field Config]
-    NextField -->|No| CheckErrors
+    NextField -->|No| TeardownDefined{Teardown<br/>Defined?}
 
     GetField --> CreatePipe[Create Pipe Instance]
     CreatePipe --> InstancePreHook{Instance Pre-Hook<br/>Defined?}
@@ -162,6 +162,10 @@ flowchart TD
 
     StoreProcessed[Store Processed Value] --> NextField
 
+    TeardownDefined -->|Yes| RunTeardown[Run Teardown]
+    TeardownDefined -->|No| CheckErrors
+    RunTeardown --> CheckErrors
+
     CheckErrors{Has Errors?} -->|Yes| HandleErrors{Error Handler<br/>Defined?}
     CheckErrors -->|No| ReturnSuccess
 
@@ -175,9 +179,9 @@ flowchart TD
 
 ### Hook Priority
 
--   **Instance hooks** (defined on pipeline instance) take precedence over **global hooks** (defined on Pipeline class)
--   Hooks can modify values using `hook.value.set(new_value)`
--   Post-hooks have access to validation status via `hook.is_valid`
+- **Instance hooks** (defined on pipeline instance) take precedence over **global hooks** (defined on Pipeline class)
+- Hooks can modify values using `hook.value.set(new_value)`
+- Post-hooks have access to validation status via `hook.is_valid`
 
 ---
 

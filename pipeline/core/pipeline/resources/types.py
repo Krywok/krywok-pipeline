@@ -23,6 +23,7 @@ class PipelinePipeConfig(TypedDict):
 
 PipelineErrors = dict[str, ConditionErrors]
 PipelineHookFunc = Callable[[PipelineHook], None]
+PipelineTeardownFunc = Callable[[Any], None]
 PipelineHandleErrorsFunc = Callable[[PipelineErrors], None]
 
 
