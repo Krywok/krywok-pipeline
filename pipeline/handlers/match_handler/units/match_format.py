@@ -111,3 +111,14 @@ class MatchFormat:
                 )
 
             return self.fullmatch(pattern)
+
+    class JWT(MatchHandler[str, None]):
+        """Validates the structure of a JSON Web Token (header.payload.signature)"""
+        SUPPORT = (HandlerMode.ROOT, HandlerMode.ITEM)
+
+        ERROR_TEMPLATES = {HandlerMode.ROOT: lambda _: "Invalid JWT format."}
+
+        def query(self):
+            return self.fullmatch(
+                r"^[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+$"
+            )
