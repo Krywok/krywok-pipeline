@@ -1,6 +1,7 @@
 name: Deploy the documentation to Cloudflare Pages
 
 on:
+    workflow_dispatch:
     release:
         types: [published]
 
