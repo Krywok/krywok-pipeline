@@ -124,10 +124,7 @@ The Pipeline orchestrates multiple Pipes to validate an entire data dictionary:
 
 ```mermaid
 flowchart TD
-    Start([Input Data Dictionary]) --> GlobalPreHook{Global Pre-Hook<br/>Defined?}
-    GlobalPreHook -->|Yes| SetGlobalPreHook[Set Global Pre-Hook]
-    GlobalPreHook -->|No| IterateFields
-    SetGlobalPreHook --> IterateFields
+    Start([Input Data Dictionary]) --> IterateFields
 
     IterateFields[Iterate Over Fields] --> NextField{More Fields?}
 
