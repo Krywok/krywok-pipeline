@@ -18,7 +18,8 @@ except ImportError:
 
 from pipeline.core.pipeline.pipeline import Pipeline
 from pipeline.core.pipeline.resources.types import (
-    PipelineHandleErrorsFunc, PipelineHookFunc, PipelinePipeConfig
+    PipelineHandleErrorsFunc, PipelineHookFunc, PipelinePipeConfig,
+    PipelineTeardownFunc
 )
 
 
@@ -29,6 +30,7 @@ class PipelineFalcon(Pipeline):
 def process_request(
     pre_hook: PipelineHookFunc | None = None,
     post_hook: PipelineHookFunc | None = None,
+    teardown: PipelineTeardownFunc | None = None,
     handle_errors: PipelineHandleErrorsFunc | None = None,
     **pipes_config: PipelinePipeConfig
 ):
@@ -51,6 +53,10 @@ def process_request(
             The global_pre_hook will not run if a local pre_hook is defined.
         post_hook (PipelineHookFunc | None): A function to be called after each pipe execution.
             The global_post_hook will not run if a local pre_hook is defined.
+        teardown (PipelineTeardownFunc | None): A function that will run after the entire 
+            pipeline finishes execution. This runs before handle_errors and will execute 
+            even if the pipeline failed. The global_teardown will not run if a local 
+            teardown is defined.
         handle_errors (PipelineHandleErrorsFunc | None): A function to handle
             errors collected during pipeline execution. This could be used to raise exceptions,
             log errors, or format them for a response. The global_handle_errors will not run
@@ -95,6 +101,7 @@ def process_request(
             return PipelineFalcon(
                 pre_hook=pre_hook,
                 post_hook=post_hook,
+                teardown=teardown,
                 handle_errors=handle_errors,
                 **pipes_config
             ).run(data=data)
