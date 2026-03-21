@@ -4,8 +4,9 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, NamedTuple
 
 if TYPE_CHECKING:
+    from pipeline.core.pipe.resources.types import PipeConfig
     from pipeline.core.pipeline.resources.types import (
-        PipelineErrors, PipelineHookValue, PipelinePipeConfig
+        PipelineErrors, PipelineHookValue
     )
 
 
@@ -17,7 +18,7 @@ class PipelineHook:
 
     is_valid: bool | None
 
-    pipe_config: PipelinePipeConfig
+    pipe_config: PipeConfig
 
 
 class PipelineResult(NamedTuple):
