@@ -39,6 +39,7 @@ nav:
           - Pipeline Hooks: hooks.md
           - Handler Modifiers: modifiers.md
           - Error Customization: customization.md
+          - Battery (DRY): battery.md
           - Framework Integrations: integrations.md
     - Lifecycle:
           - Condition: condition.md

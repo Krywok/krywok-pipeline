@@ -1,25 +1,7 @@
-from typing import Any, Callable, NotRequired, Protocol, TypedDict
+from typing import Any, Callable, Protocol
 
-from pipeline.core.pipe.resources.types import (
-    PipeConditions, PipeMatches, PipeMetadata, PipeTransform
-)
 from pipeline.core.pipeline.resources.constants import PipelineHook
 from pipeline.handlers.condition_handler.resources.types import ConditionErrors
-
-
-class PipelinePipeConfig(TypedDict):
-    type: type
-
-    setup: NotRequired[PipeTransform]
-
-    conditions: NotRequired[PipeConditions]
-    matches: NotRequired[PipeMatches]
-    transform: NotRequired[PipeTransform]
-
-    optional: NotRequired[bool]
-
-    metadata: NotRequired[PipeMetadata]
-
 
 PipelineErrors = dict[str, ConditionErrors]
 PipelineHookFunc = Callable[[PipelineHook], None]

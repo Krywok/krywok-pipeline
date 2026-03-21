@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from functools import partial
-from typing import Any, Type
+from typing import Any, NotRequired, Type, TypedDict
 
 from pipeline.handlers.condition_handler.condition_handler import \
     ConditionHandler
@@ -15,3 +15,23 @@ PipeTransform = dict[Type[TransformHandler] | partial[TransformHandler], Any]
 
 PipeContext = dict[str, Any]
 PipeMetadata = dict[str, Any]
+
+
+class _BasePipeConfig(TypedDict):
+    setup: NotRequired[PipeTransform]
+
+    conditions: NotRequired[PipeConditions]
+    matches: NotRequired[PipeMatches]
+    transform: NotRequired[PipeTransform]
+
+    optional: NotRequired[bool]
+
+    metadata: NotRequired[PipeMetadata]
+
+
+class PipeConfig(_BasePipeConfig):
+    type: type
+
+
+class PipeUpdateConfig(_BasePipeConfig):
+    pass

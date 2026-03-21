@@ -1,14 +1,13 @@
 from functools import wraps
 from typing import Any, Callable, ClassVar, ParamSpec, TypeVar
 
-from pipeline.core.pipe.resources.types import PipeContext
+from pipeline.core.pipe.resources.types import PipeConfig, PipeContext
 from pipeline.core.pipeline.resources.constants import (
     PipelineHook, PipelineResult
 )
 from pipeline.core.pipeline.resources.exceptions import PipelineException
 from pipeline.core.pipeline.resources.types import (
-    PipelineHandleErrorsFunc, PipelineHookFunc, PipelinePipeConfig,
-    PipelineTeardownFunc
+    PipelineHandleErrorsFunc, PipelineHookFunc, PipelineTeardownFunc
 )
 from pipeline.handlers.condition_handler.resources.types import ConditionErrors
 
@@ -52,7 +51,7 @@ class Pipeline:
         post_hook: PipelineHookFunc | None = None,
         teardown: PipelineTeardownFunc | None = None,
         handle_errors: PipelineHandleErrorsFunc | None = None,
-        **pipes_config: PipelinePipeConfig
+        **pipes_config: PipeConfig
     ) -> None:
         """
         Initializes the Pipeline with a configuration of pipes.
@@ -75,7 +74,7 @@ class Pipeline:
                 errors collected during pipeline execution. This could be used to raise exceptions,
                 log errors, or format them for a response. The global_handle_errors will not run
                 if a local handle_errors is defined.
-            **pipes_config (PipelinePipeConfig): Configuration for the pipes.
+            **pipes_config (PipeConfig): Configuration for the pipes.
                 Keys represent the fields in the data dictionary to be processed,
                 and values are the configuration for the corresponding pipe.
         """
@@ -86,7 +85,7 @@ class Pipeline:
 
         self.teardown: PipelineTeardownFunc | None = teardown
 
-        self.pipes_config: dict[str, PipelinePipeConfig] = pipes_config
+        self.pipes_config: dict[str, PipeConfig] = pipes_config
 
         self._errors: dict[str, ConditionErrors] = {}
         self._processed_data: dict = {}
@@ -148,7 +147,7 @@ class Pipeline:
 
     def _process_field_pipe(
         self, data: dict, context: PipeContext, field: str,
-        pipe_config: PipelinePipeConfig
+        pipe_config: PipeConfig
     ) -> None:
         """
         Internal function that runs the pipe on a specific field and manages hooks.

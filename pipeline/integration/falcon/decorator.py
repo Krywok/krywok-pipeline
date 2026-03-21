@@ -3,6 +3,7 @@ import json
 from functools import wraps
 from typing import Callable, cast
 
+from pipeline.core.pipe.resources.types import PipeConfig
 from pipeline.core.pipeline.resources.constants import PipelineResult
 
 try:
@@ -18,8 +19,7 @@ except ImportError:
 
 from pipeline.core.pipeline.pipeline import Pipeline
 from pipeline.core.pipeline.resources.types import (
-    PipelineHandleErrorsFunc, PipelineHookFunc, PipelinePipeConfig,
-    PipelineTeardownFunc
+    PipelineHandleErrorsFunc, PipelineHookFunc, PipelineTeardownFunc
 )
 
 
@@ -32,7 +32,7 @@ def process_request(
     post_hook: PipelineHookFunc | None = None,
     teardown: PipelineTeardownFunc | None = None,
     handle_errors: PipelineHandleErrorsFunc | None = None,
-    **pipes_config: PipelinePipeConfig
+    **pipes_config: PipeConfig
 ):
     """
     A decorator factory that validates Falcon request (WSGI and ASGI) data
@@ -61,7 +61,7 @@ def process_request(
             errors collected during pipeline execution. This could be used to raise exceptions,
             log errors, or format them for a response. The global_handle_errors will not run
             if a local handle_errors is defined.
-        **pipes_config (PipelinePipeConfig): Configuration for the pipes.
+        **pipes_config (PipeConfig): Configuration for the pipes.
             Keys represent the fields in the data dictionary to be processed,
             and values are the configuration for the corresponding pipe.
 

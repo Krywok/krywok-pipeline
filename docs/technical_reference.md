@@ -61,3 +61,13 @@
 
     options:
         show_root_heading: true
+
+::: pipeline.battery.unit.BatteryUnit
+
+    options:
+        show_root_heading: true
+
+::: pipeline.battery.battery.Battery
+
+    options:
+        show_root_heading: true
