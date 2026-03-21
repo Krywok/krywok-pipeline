@@ -1,4 +1,4 @@
-from typing import Unpack
+from typing import Literal, Unpack
 
 from pipeline import Condition, Match
 from pipeline.battery.unit import BatteryUnit
@@ -21,7 +21,6 @@ class Battery:
         matches={Match.Format.UUID: None}
     )
     """A pre-built unit that validates a UUID v4 string."""
-
     @classmethod
     def add(cls, name: str, **pipe_config: Unpack[PipeConfig]) -> None:
         """
@@ -126,3 +125,60 @@ class Battery:
                 Condition.MaxNumber: max_number
             }
         )
+
+    @staticmethod
+    def use_token(
+        exact_length: int = 32, digits_only: bool = False
+    ) -> BatteryUnit:
+        """
+        Creates a BatteryUnit for token validation.
+
+        Produces a unit that validates a string as a fixed-length token.
+        Can be configured for alphanumeric characters or strictly digits.
+
+        Args:
+            exact_length (int): The required exact length of the token. 
+                Defaults to 32.
+            digits_only (bool): If True, validates using Match.Text.Digits.
+                If False, validates using Match.Text.Alphanumeric. Defaults to False.
+
+        Returns:
+            BatteryUnit: A unit for token validation.
+        """
+        pattern = Match.Text.Digits if digits_only else Match.Text.Alphanumeric
+
+        return BatteryUnit(
+            type=str,
+            conditions={Condition.ExactLength: exact_length},
+            matches={pattern: None}
+        )
+
+    @staticmethod
+    def use_password(
+        policy: Literal["relaxed", "normal", "strict"] | None
+    ) -> BatteryUnit:
+        """
+        Creates a BatteryUnit for password validation.
+
+        Produces a unit that validates a string's length and, optionally, 
+        its complexity against predefined security patterns.
+
+        Args:
+            policy (Literal["relaxed", "normal", "strict"]): The complexity level. If None, only
+                length is validated (min: 6, max: 64).
+
+        Returns:
+            BatteryUnit: A unit for password validation.
+        """
+        config: PipeConfig = {
+            'type': str,
+            'conditions': {
+                Condition.MinLength: 6,
+                Condition.MaxLength: 64
+            }
+        }
+
+        if policy is not None:
+            config['matches'] = {Match.Format.Password: policy}
+
+        return BatteryUnit(**config)
