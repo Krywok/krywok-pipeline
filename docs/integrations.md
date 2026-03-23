@@ -1,17 +1,17 @@
 # Framework Integrations
 
-Hetman Pipeline provides seamless integration with popular web frameworks, making it easy to validate request data in your API endpoints.
+Krywok Pipeline provides seamless integration with popular web frameworks, making it easy to validate request data in your API endpoints.
 
 ---
 
 ## Falcon Integration
 
-Hetman Pipeline includes built-in support for the [Falcon](https://falcon.readthedocs.io/) web framework, supporting both WSGI and ASGI applications.
+Krywok Pipeline includes built-in support for the [Falcon](https://falcon.readthedocs.io/) web framework, supporting both WSGI and ASGI applications.
 
 ### Installation
 
 ```bash
-pip install hetman-pipeline[falcon]
+pip install krywok-pipeline[falcon]
 ```
 
 ---
@@ -60,14 +60,12 @@ app.add_route('/users', UserResource())
 ## How It Works
 
 1. **Request Data Extraction**: The decorator automatically extracts data from:
-
     - Query parameters (for GET requests): This is slightly more complex because all query values are passed as strings. We attempt to JSON-deserialize every value so that each query parameter is parsed as JSON.
     - Request body (for POST, PUT, PATCH, etc.): We use the .get_media() method to retrieve the payload.
 
 2. **Validation**: Data is validated using the pipeline configuration
 
 3. **Error Handling**: If validation fails:
-
     - Response status is set to `422 Unprocessable Content`
     - Response body contains validation errors
     - Responder method is **not** executed
@@ -446,7 +444,7 @@ class StrictResource:
 
 ## Integration with Other Frameworks
 
-While Hetman Pipeline currently has built-in support for Falcon, you can easily integrate it with other frameworks:
+While Krywok Pipeline currently has built-in support for Falcon, you can easily integrate it with other frameworks:
 
 ### Flask Example
 
@@ -489,6 +487,6 @@ More integrations will be added in the future but you can easily add your own in
 
 ## Next Steps
 
--   Learn about [Pipeline Hooks](hooks.md) for custom processing
--   Explore [Handler Modifiers](modifiers.md) for advanced validation
--   Check [Error Customization](customization.md) for custom error messages
+- Learn about [Pipeline Hooks](hooks.md) for custom processing
+- Explore [Handler Modifiers](modifiers.md) for advanced validation
+- Check [Error Customization](customization.md) for custom error messages

@@ -1,6 +1,6 @@
 # Usage & Examples
 
-Hetman Pipeline is designed to be flexible, allowing you to use it as a standalone validator for single values, a schema-based orchestrator for dictionaries, or a decorator for type-safe functions.
+Krywok Pipeline is designed to be flexible, allowing you to use it as a standalone validator for single values, a schema-based orchestrator for dictionaries, or a decorator for type-safe functions.
 
 ---
 
@@ -522,10 +522,10 @@ print(result.processed_data)
 
 ## Next Steps
 
--   **[Pipeline Hooks](hooks.md)** - Learn about pre_hook and post_hook in detail
--   **[Handler Modifiers](modifiers.md)** - Master Item() and Context() modifiers
--   **[Error Customization](customization.md)** - Customize error messages and templates
--   **[Framework Integrations](integrations.md)** - Integrate with Falcon and other frameworks
--   **[Lifecycle: Condition](condition.md)** - Explore condition handlers
--   **[Lifecycle: Match](match.md)** - Explore match handlers
--   **[Lifecycle: Transform](transform.md)** - Explore transformation handlers
+- **[Pipeline Hooks](hooks.md)** - Learn about pre_hook and post_hook in detail
+- **[Handler Modifiers](modifiers.md)** - Master Item() and Context() modifiers
+- **[Error Customization](customization.md)** - Customize error messages and templates
+- **[Framework Integrations](integrations.md)** - Integrate with Falcon and other frameworks
+- **[Lifecycle: Condition](condition.md)** - Explore condition handlers
+- **[Lifecycle: Match](match.md)** - Explore match handlers
+- **[Lifecycle: Transform](transform.md)** - Explore transformation handlers

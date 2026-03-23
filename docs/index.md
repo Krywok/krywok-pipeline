@@ -1,13 +1,13 @@
 # Introduction
 
-<img src="./assets/full-white-text.webp" alt="Hetman Logo" width="200" height="38" />
+<img src="./assets/full-white-text.webp" alt="Krywok Logo" width="200" height="38" />
 
-**Hetman Pipeline** is a flexible, developer-centric validation engine. It is built for those who prioritize deep customization and want to manage validation, matching, and transformation logic in one centralized location.
+**Krywok Pipeline** is a flexible, developer-centric validation engine. It is built for those who prioritize deep customization and want to manage validation, matching, and transformation logic in one centralized location.
 
 ## Installation
 
 ```bash
-pip install hetman-pipeline
+pip install krywok-pipeline
 ```
 
 ---
@@ -184,7 +184,7 @@ flowchart TD
 
 ## Technical Features
 
-!!! abstract "Why use Hetman?"
+!!! abstract "Why use Krywok Pipeline?"
 
     -   **Centralized Logic:** Keep your validation rules and data cleaning in one schema.
     -   **Extensible:** Highly customizable pipes for unique business requirements.

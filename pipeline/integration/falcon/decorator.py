@@ -14,13 +14,13 @@ try:
 except ImportError:
     raise ImportError(
         "Falcon package is required. Install it using:"
-        "pip install hetman-pipeline[falcon]"
+        "pip install krywok-pipeline[falcon]"
     )
 
 from pipeline.core.pipeline.pipeline import Pipeline
-from pipeline.core.pipeline.resources.types import (
-    PipelineHandleErrorsFunc, PipelineHookFunc, PipelineTeardownFunc
-)
+from pipeline.core.pipeline.resources.types import (PipelineHandleErrorsFunc,
+                                                    PipelineHookFunc,
+                                                    PipelineTeardownFunc)
 
 
 class PipelineFalcon(Pipeline):

@@ -1,4 +1,4 @@
-site_name: Hetman Pipeline
+site_name: Krywok Pipeline
 
 theme:
     name: material
@@ -52,10 +52,10 @@ nav:
 extra_css:
     - stylesheets/extra.css
 
-site_url: https://pipeline.hetman.app
+site_url: https://pipeline.krywok.com
 
-repo_url: https://github.com/hetman-app/hetman-pipeline
-repo_name: hetman-app/hetman-pipeline
+repo_url: https://github.com/krywok/krywok-pipeline
+repo_name: krywok/krywok-pipeline
 
 edit_uri: blob/main/docs/
 

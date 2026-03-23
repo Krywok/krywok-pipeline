@@ -1,6 +1,6 @@
 # Creating Custom Handlers
 
-This guide shows you how to create your own custom `ConditionHandler`, `MatchHandler`, and `TransformHandler` to extend Hetman Pipeline with your specific business logic.
+This guide shows you how to create your own custom `ConditionHandler`, `MatchHandler`, and `TransformHandler` to extend Krywok Pipeline with your specific business logic.
 
 ---
 
@@ -311,7 +311,7 @@ print(result.value)  # "************3456"
 
     !!! tip "Type Safety"
 
-        Hetman Pipeline ensures type safety by validating the value and argument type before running the handler.
+        Krywok Pipeline ensures type safety by validating the value and argument type before running the handler.
 
     !!! warning "Nested Types"
 
@@ -379,6 +379,6 @@ result = Pipe(
 
 ## Next Steps
 
--   Learn about [Error Customization](customization.md) to customize error messages
--   Explore [Handler Modifiers](modifiers.md) to use `Item()` and `Context()` with your handlers
--   Check [Pipeline Hooks](hooks.md) for pre/post processing logic
+- Learn about [Error Customization](customization.md) to customize error messages
+- Explore [Handler Modifiers](modifiers.md) to use `Item()` and `Context()` with your handlers
+- Check [Pipeline Hooks](hooks.md) for pre/post processing logic

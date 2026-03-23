@@ -1,6 +1,6 @@
 # Error Customization
 
-Hetman Pipeline provides flexible error customization through the `ERROR_TEMPLATES` system. You can customize error messages globally, per handler, or per handler mode.
+Krywok Pipeline provides flexible error customization through the `ERROR_TEMPLATES` system. You can customize error messages globally, per handler, or per handler mode.
 
 ---
 
@@ -337,6 +337,6 @@ Pipe.Match.Format.Email.ERROR_TEMPLATES = original_template
 
 ## Next Steps
 
--   Learn about [Pipeline Hooks](hooks.md) for custom processing logic
--   Explore [Handler Modifiers](modifiers.md) for Item() and Context()
--   Check [Framework Integrations](integrations.md) for Falcon integration
+- Learn about [Pipeline Hooks](hooks.md) for custom processing logic
+- Explore [Handler Modifiers](modifiers.md) for Item() and Context()
+- Check [Framework Integrations](integrations.md) for Falcon integration

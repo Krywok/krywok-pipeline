@@ -10,19 +10,19 @@ Hooks are powerful mechanisms that allow you to inject custom logic before and a
 
 Executed **before** each pipe runs. Perfect for:
 
--   Global data sanitization (e.g., stripping whitespace)
--   Preprocessing values
--   Logging incoming data
--   Modifying values before validation
+- Global data sanitization (e.g., stripping whitespace)
+- Preprocessing values
+- Logging incoming data
+- Modifying values before validation
 
 ### `post_hook`
 
 Executed **after** each pipe runs. Perfect for:
 
--   Logging validation results
--   Redacting sensitive data
--   Side effects based on validation status
--   Collecting metrics
+- Logging validation results
+- Redacting sensitive data
+- Side effects based on validation status
+- Collecting metrics
 
 ---
 
@@ -64,7 +64,7 @@ def my_hook(hook):
 
 ## Three Levels of Customization
 
-Hetman Pipeline offers **three flexible ways** to customize hooks, from global to specific:
+Krywok Pipeline offers **three flexible ways** to customize hooks, from global to specific:
 
 ### 1. Global Class-Level Hooks
 
@@ -366,6 +366,6 @@ print("Tenant B Audit:", tenant_b_pipeline.get_audit_trail())
 
 ## Next Steps
 
--   Learn about [Handler Modifiers](modifiers.md) for advanced value processing
--   Explore [Error Customization](customization.md) for custom error messages
--   Check [Framework Integrations](integrations.md) for Falcon and other frameworks
+- Learn about [Handler Modifiers](modifiers.md) for advanced value processing
+- Explore [Error Customization](customization.md) for custom error messages
+- Check [Framework Integrations](integrations.md) for Falcon and other frameworks
