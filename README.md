@@ -1,4 +1,4 @@
-<img src="https://raw.githubusercontent.com/krywok/krywok-pipeline/main/docs/assets/full-white-text.webp" alt="Krywok Logo" width="200" height="38" />
+<img src="https://krywok.com/svg/logo/full-mix-white-alpha.svg" alt="Krywok Logo" width="190" height="55" />
 
 ---
 
