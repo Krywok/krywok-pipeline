@@ -10,8 +10,8 @@ theme:
     icon:
         repo: fontawesome/brands/github
 
-    logo: assets/full-white-text.webp
-    favicon: assets/favicon-transparent.webp
+    logo: assets/logo.png
+    favicon: assets/favicon.ico
 
     palette:
         scheme: slate

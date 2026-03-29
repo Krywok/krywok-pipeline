@@ -1,6 +1,6 @@
 # Introduction
 
-<img src="./assets/full-white-text.webp" alt="Krywok Logo" width="200" height="38" />
+<img src="./assets/logo.png" alt="Krywok Logo" width="190" height="55" />
 
 **Krywok Pipeline** is a flexible, developer-centric validation engine. It is built for those who prioritize deep customization and want to manage validation, matching, and transformation logic in one centralized location.
 
