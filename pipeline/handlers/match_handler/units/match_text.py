@@ -10,77 +10,95 @@ class MatchText:
 
     Includes handlers for Lowercase, Uppercase, Digits, etc.
     """
-    class Lowercase(MatchHandler[str, None]):
-        """Accepts ONLY lowercase English letters (a-z)"""
-        SUPPORT = (HandlerMode.ROOT, HandlerMode.ITEM)
-
-        ERROR_TEMPLATES = {
-            HandlerMode.ROOT: lambda _: "Must contain only lowercase letters (a-z)."
-        }
-
-        def query(self):
-            return self.fullmatch(r"^[a-z]+$")
-
-    class LowercaseWithSpaces(MatchHandler[str, None]):
-        """Accepts lowercase English letters (a-z) and spaces"""
+    class Lowercase(MatchHandler[str, set | None]):
+        """Accepts ONLY lowercase English letters (a-z) if no diacritics are provided via set."""
         SUPPORT = (HandlerMode.ROOT, HandlerMode.ITEM)
 
         ERROR_TEMPLATES = {
             HandlerMode.ROOT:
                 lambda _:
-                "Must contain only lowercase letters and spaces (e.g., 'hello world')."
+                "Must contain only lowercase letters (a-z) and allowed diacritics."
         }
 
         def query(self):
-            return self.fullmatch(r"^[a-z ]+$")
+            diacritics: str = self.get_diacritics(self.argument, "lower")
 
-    class Uppercase(MatchHandler[str, None]):
-        """Accepts ONLY uppercase English letters (A-Z)"""
-        SUPPORT = (HandlerMode.ROOT, HandlerMode.ITEM)
+            return self.fullmatch(rf"^[a-z{diacritics}]+$")
 
-        ERROR_TEMPLATES = {
-            HandlerMode.ROOT: lambda _: "Must contain only uppercase letters (A-Z)."
-        }
-
-        def query(self):
-            return self.fullmatch(r"^[A-Z]+$")
-
-    class UppercaseWithSpaces(MatchHandler[str, None]):
-        """Accepts uppercase English letters (A-Z) and spaces"""
+    class LowercaseWithSpaces(MatchHandler[str, set | None]):
+        """Accepts lowercase English letters (a-z) and spaces if no diacritics are provided via set."""
         SUPPORT = (HandlerMode.ROOT, HandlerMode.ITEM)
 
         ERROR_TEMPLATES = {
             HandlerMode.ROOT:
                 lambda _:
-                "Must contain only uppercase letters and spaces (e.g., 'HELLO WORLD')."
+                "Must contain only lowercase letters, spaces and allowed diacritics."
         }
 
         def query(self):
-            return self.fullmatch(r"^[A-Z ]+$")
+            diacritics: str = self.get_diacritics(self.argument, "lower")
 
-    class Letters(MatchHandler[str, None]):
-        """Accepts ONLY case English letters (a-z, A-Z)"""
-        SUPPORT = (HandlerMode.ROOT, HandlerMode.ITEM)
+            return self.fullmatch(rf"^[a-z {diacritics}]+$")
 
-        ERROR_TEMPLATES = {
-            HandlerMode.ROOT: lambda _: "Must contain only letters (a-z, A-Z)."
-        }
-
-        def query(self):
-            return self.fullmatch(r"^[a-zA-Z]+$")
-
-    class LettersWithSpaces(MatchHandler[str, None]):
-        """Accepts English letters (a-z, A-Z) and spaces"""
+    class Uppercase(MatchHandler[str, set | None]):
+        """Accepts ONLY uppercase English letters (A-Z) if no diacritics are provided via set."""
         SUPPORT = (HandlerMode.ROOT, HandlerMode.ITEM)
 
         ERROR_TEMPLATES = {
             HandlerMode.ROOT:
                 lambda _:
-                "Must contain only letters and spaces (e.g., 'Hello World')."
+                "Must contain only uppercase letters (A-Z) and allowed diacritics."
         }
 
         def query(self):
-            return self.fullmatch(r"^[a-zA-Z ]+$")
+            diacritics: str = self.get_diacritics(self.argument, "upper")
+
+            return self.fullmatch(rf"^[A-Z{diacritics}]+$")
+
+    class UppercaseWithSpaces(MatchHandler[str, set | None]):
+        """Accepts uppercase English letters (A-Z) and spaces if no diacritics are provided via set."""
+        SUPPORT = (HandlerMode.ROOT, HandlerMode.ITEM)
+
+        ERROR_TEMPLATES = {
+            HandlerMode.ROOT:
+                lambda _:
+                "Must contain only uppercase letters, spaces and allowed diacritics."
+        }
+
+        def query(self):
+            diacritics: str = self.get_diacritics(self.argument, "upper")
+
+            return self.fullmatch(rf"^[A-Z {diacritics}]+$")
+
+    class Letters(MatchHandler[str, set | None]):
+        """Accepts ONLY English letters (a-z, A-Z) if no diacritics are provided via set."""
+        SUPPORT = (HandlerMode.ROOT, HandlerMode.ITEM)
+
+        ERROR_TEMPLATES = {
+            HandlerMode.ROOT:
+                lambda _:
+                "Must contain only letters (a-z, A-Z) and allowed diacritics."
+        }
+
+        def query(self):
+            diacritics: str = self.get_diacritics(self.argument)
+
+            return self.fullmatch(rf"^[a-zA-Z{diacritics}]+$")
+
+    class LettersWithSpaces(MatchHandler[str, set | None]):
+        """Accepts English letters (a-z, A-Z) and spaces if no diacritics are provided via set."""
+        SUPPORT = (HandlerMode.ROOT, HandlerMode.ITEM)
+
+        ERROR_TEMPLATES = {
+            HandlerMode.ROOT:
+                lambda _:
+                "Must contain only letters, spaces and allowed diacritics."
+        }
+
+        def query(self):
+            diacritics: str = self.get_diacritics(self.argument)
+
+            return self.fullmatch(rf"^[a-zA-Z {diacritics}]+$")
 
     class Digits(MatchHandler[str, None]):
         """Accepts ONLY numeric digits (0-9)"""
@@ -106,43 +124,50 @@ class MatchText:
         def query(self):
             return self.fullmatch(r"^[\d ]+$")
 
-    class Alphanumeric(MatchHandler[str, None]):
-        """Accepts letters and numeric digits. No symbols or spaces"""
-        SUPPORT = (HandlerMode.ROOT, HandlerMode.ITEM)
-
-        ERROR_TEMPLATES = {
-            HandlerMode.ROOT:
-                lambda _: "Must contain only letters and digits (e.g., 'abc123')."
-        }
-
-        def query(self):
-            return self.fullmatch(r"^[a-zA-Z0-9]+$")
-
-    class AlphanumericWithSpaces(MatchHandler[str, None]):
-        """Accepts letters, numeric digits, and spaces. No symbols"""
+    class Alphanumeric(MatchHandler[str, set | None]):
+        """Accepts letters and digits if no diacritics are provided via set. No symbols or spaces."""
         SUPPORT = (HandlerMode.ROOT, HandlerMode.ITEM)
 
         ERROR_TEMPLATES = {
             HandlerMode.ROOT:
                 lambda _:
-                "Must contain only letters, digits, and spaces (e.g., 'abc 123')."
+                "Must contain only letters, digits and allowed diacritics."
         }
 
         def query(self):
-            return self.fullmatch(r"^[a-zA-Z0-9 ]+$")
+            diacritics: str = self.get_diacritics(self.argument)
 
-    class Printable(MatchHandler[str, None]):
-        """Accepts letters, numbers, symbols, and spaces (ASCII 20-7E)"""
+            return self.fullmatch(rf"^[a-zA-Z0-9{diacritics}]+$")
+
+    class AlphanumericWithSpaces(MatchHandler[str, set | None]):
+        """Accepts letters, digits, and spaces if no diacritics are provided via set. No symbols."""
         SUPPORT = (HandlerMode.ROOT, HandlerMode.ITEM)
 
         ERROR_TEMPLATES = {
             HandlerMode.ROOT:
                 lambda _:
-                "Contains invalid characters. Only printable ASCII characters are allowed."
+                "Must contain only letters, digits, spaces and allowed diacritics."
         }
 
         def query(self):
-            return self.fullmatch(r"^[ -~]+$")
+            diacritics: str = self.get_diacritics(self.argument)
+
+            return self.fullmatch(rf"^[a-zA-Z0-9 {diacritics}]+$")
+
+    class Printable(MatchHandler[str, set | None]):
+        """Accepts ASCII (20-7E) and diacritics if provided via set."""
+        SUPPORT = (HandlerMode.ROOT, HandlerMode.ITEM)
+
+        ERROR_TEMPLATES = {
+            HandlerMode.ROOT:
+                lambda _:
+                "Contains invalid characters. Only printable ASCII and allowed diacritics are allowed."
+        }
+
+        def query(self):
+            diacritics: str = self.get_diacritics(self.argument)
+
+            return self.fullmatch(rf"^[ -~{diacritics}]+$")
 
     class NoWhitespace(MatchHandler[str, None]):
         """Ensures string contains no spaces, tabs, or line breaks"""
