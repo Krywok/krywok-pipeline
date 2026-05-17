@@ -50,7 +50,7 @@ class MatchHandler(ConditionHandler[V, A]):
 
     @staticmethod
     def get_diacritics(
-        languages: set[str] | None,
+        languages: tuple[str, ...] | None,
         letter_case: Literal["lower", "upper"] | None = None,
         /,
     ) -> str:
@@ -62,7 +62,7 @@ class MatchHandler(ConditionHandler[V, A]):
         cases by default.
 
         Args:
-            languages: A set of ISO 639-1 language codes (e.g., {"fr", "de"}). 
+            languages: A tuple of ISO 639-1 language codes (e.g., ("fr", "de")). 
                 If None or empty, an empty string is returned.
             letter_case: The desired grammatical case for the diacritics. 
                 Options are "lower", "upper", or None. If None, both cases 

@@ -31,7 +31,7 @@ While Conditions check for structural integrity (type and size), the Match stage
     - **Email**: Use `Match.Format.Email`
     - **URL**: Use `Match.Web.URL`
     - **Phone**: Use `Match.Format.E164Phone`
-    - **National Name**: Use `Match.Text.LettersWithSpaces`: {"pl"} (or any other locale specific name)
+    - **National Name**: Use `Match.Text.LettersWithSpaces`: ("pl", ) (or any other locale specific name)
     - **Custom patterns**: Use `Match.Regex.FullMatch` or `Match.Regex.Search`
 
 !!! warning "Regex Performance"

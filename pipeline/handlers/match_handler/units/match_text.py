@@ -10,8 +10,8 @@ class MatchText:
 
     Includes handlers for Lowercase, Uppercase, Digits, etc.
     """
-    class Lowercase(MatchHandler[str, set | None]):
-        """Accepts ONLY lowercase English letters (a-z) if no diacritics are provided via set."""
+    class Lowercase(MatchHandler[str, tuple | None]):
+        """Accepts ONLY lowercase English letters (a-z) if no diacritics are provided via tuple."""
         SUPPORT = (HandlerMode.ROOT, HandlerMode.ITEM)
 
         ERROR_TEMPLATES = {
@@ -25,8 +25,8 @@ class MatchText:
 
             return self.fullmatch(rf"^[a-z{diacritics}]+$")
 
-    class LowercaseWithSpaces(MatchHandler[str, set | None]):
-        """Accepts lowercase English letters (a-z) and spaces if no diacritics are provided via set."""
+    class LowercaseWithSpaces(MatchHandler[str, tuple | None]):
+        """Accepts lowercase English letters (a-z) and spaces if no diacritics are provided via tuple."""
         SUPPORT = (HandlerMode.ROOT, HandlerMode.ITEM)
 
         ERROR_TEMPLATES = {
@@ -40,8 +40,8 @@ class MatchText:
 
             return self.fullmatch(rf"^[a-z {diacritics}]+$")
 
-    class Uppercase(MatchHandler[str, set | None]):
-        """Accepts ONLY uppercase English letters (A-Z) if no diacritics are provided via set."""
+    class Uppercase(MatchHandler[str, tuple | None]):
+        """Accepts ONLY uppercase English letters (A-Z) if no diacritics are provided via tuple."""
         SUPPORT = (HandlerMode.ROOT, HandlerMode.ITEM)
 
         ERROR_TEMPLATES = {
@@ -55,8 +55,8 @@ class MatchText:
 
             return self.fullmatch(rf"^[A-Z{diacritics}]+$")
 
-    class UppercaseWithSpaces(MatchHandler[str, set | None]):
-        """Accepts uppercase English letters (A-Z) and spaces if no diacritics are provided via set."""
+    class UppercaseWithSpaces(MatchHandler[str, tuple | None]):
+        """Accepts uppercase English letters (A-Z) and spaces if no diacritics are provided via tuple."""
         SUPPORT = (HandlerMode.ROOT, HandlerMode.ITEM)
 
         ERROR_TEMPLATES = {
@@ -70,8 +70,8 @@ class MatchText:
 
             return self.fullmatch(rf"^[A-Z {diacritics}]+$")
 
-    class Letters(MatchHandler[str, set | None]):
-        """Accepts ONLY English letters (a-z, A-Z) if no diacritics are provided via set."""
+    class Letters(MatchHandler[str, tuple | None]):
+        """Accepts ONLY English letters (a-z, A-Z) if no diacritics are provided via tuple."""
         SUPPORT = (HandlerMode.ROOT, HandlerMode.ITEM)
 
         ERROR_TEMPLATES = {
@@ -85,8 +85,8 @@ class MatchText:
 
             return self.fullmatch(rf"^[a-zA-Z{diacritics}]+$")
 
-    class LettersWithSpaces(MatchHandler[str, set | None]):
-        """Accepts English letters (a-z, A-Z) and spaces if no diacritics are provided via set."""
+    class LettersWithSpaces(MatchHandler[str, tuple | None]):
+        """Accepts English letters (a-z, A-Z) and spaces if no diacritics are provided via tuple."""
         SUPPORT = (HandlerMode.ROOT, HandlerMode.ITEM)
 
         ERROR_TEMPLATES = {
@@ -124,8 +124,8 @@ class MatchText:
         def query(self):
             return self.fullmatch(r"^[\d ]+$")
 
-    class Alphanumeric(MatchHandler[str, set | None]):
-        """Accepts letters and digits if no diacritics are provided via set. No symbols or spaces."""
+    class Alphanumeric(MatchHandler[str, tuple | None]):
+        """Accepts letters and digits if no diacritics are provided via tuple. No symbols or spaces."""
         SUPPORT = (HandlerMode.ROOT, HandlerMode.ITEM)
 
         ERROR_TEMPLATES = {
@@ -139,8 +139,8 @@ class MatchText:
 
             return self.fullmatch(rf"^[a-zA-Z0-9{diacritics}]+$")
 
-    class AlphanumericWithSpaces(MatchHandler[str, set | None]):
-        """Accepts letters, digits, and spaces if no diacritics are provided via set. No symbols."""
+    class AlphanumericWithSpaces(MatchHandler[str, tuple | None]):
+        """Accepts letters, digits, and spaces if no diacritics are provided via tuple. No symbols."""
         SUPPORT = (HandlerMode.ROOT, HandlerMode.ITEM)
 
         ERROR_TEMPLATES = {
@@ -154,8 +154,8 @@ class MatchText:
 
             return self.fullmatch(rf"^[a-zA-Z0-9 {diacritics}]+$")
 
-    class Printable(MatchHandler[str, set | None]):
-        """Accepts ASCII (20-7E) and diacritics if provided via set."""
+    class Printable(MatchHandler[str, tuple | None]):
+        """Accepts ASCII (20-7E) and diacritics if provided via tuple."""
         SUPPORT = (HandlerMode.ROOT, HandlerMode.ITEM)
 
         ERROR_TEMPLATES = {
