@@ -7,12 +7,10 @@ name = "krywok-pipeline"
 version = "1.1.0"
 description = "Krywok Pipeline is a flexible, developer-centric validation engine. It is built for those who prioritize deep customization and want to manage validation, matching, and transformation logic in one centralized location."
 readme = { file = "README.md", content-type = "text/markdown" }
-requires-python = ">=3.10"
+requires-python = ">=3.12"
 license-files = ["LICENSE"]
 authors = [{ name = "Krywok", email = "degadupeko@my-relay.app" }]
 classifiers = [
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3.14",
