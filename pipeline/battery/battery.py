@@ -1,6 +1,6 @@
 from typing import Literal, Unpack
 
-from pipeline import Condition, Match
+from pipeline import Condition, Match, Transform
 from pipeline.battery.unit import BatteryUnit
 from pipeline.core.pipe.resources.types import PipeConfig
 
@@ -75,7 +75,8 @@ class Battery:
                 Condition.MinLength: min_length,
                 Condition.MaxLength: max_length
             },
-            matches={Match.Format.Email: None}
+            matches={Match.Format.Email: None},
+            transform={Transform.Lowercase: None}
         )
 
     @staticmethod
