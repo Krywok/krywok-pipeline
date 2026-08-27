@@ -1,0 +1,42 @@
+name: Format Python
+
+on:
+    push:
+        branches:
+            - main
+        paths:
+            - "**/*.py"
+            - ".style.yapf"
+    workflow_dispatch:
+
+jobs:
+    format:
+        runs-on: ubuntu-latest
+
+        permissions:
+            contents: write
+
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v7
+              with:
+                  ref: ${{ github.head_ref }}
+
+            - name: Set up Python
+              uses: actions/setup-python@v7
+              with:
+                  python-version: "3.13"
+
+            - name: Install yapf and isort
+              run: pip install yapf==0.43.0 isort==9.0.0
+
+            - name: Run yapf
+              run: yapf -i -r .
+
+            - name: Run isort
+              run: isort .
+
+            - name: Commit changes
+              uses: stefanzweifel/git-auto-commit-action@v7
+              with:
+                  commit_message: "style: format python [skip ci]"
