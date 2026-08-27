@@ -2,13 +2,12 @@ from functools import wraps
 from typing import Any, Callable, ClassVar, ParamSpec, TypeVar
 
 from pipeline.core.pipe.resources.types import PipeConfig, PipeContext
-from pipeline.core.pipeline.resources.constants import (
-    PipelineHook, PipelineResult
-)
+from pipeline.core.pipeline.resources.constants import (PipelineHook,
+                                                        PipelineResult)
 from pipeline.core.pipeline.resources.exceptions import PipelineException
-from pipeline.core.pipeline.resources.types import (
-    PipelineHandleErrorsFunc, PipelineHookFunc, PipelineTeardownFunc
-)
+from pipeline.core.pipeline.resources.types import (PipelineHandleErrorsFunc,
+                                                    PipelineHookFunc,
+                                                    PipelineTeardownFunc)
 from pipeline.handlers.condition_handler.resources.types import ConditionErrors
 
 F = TypeVar("F")

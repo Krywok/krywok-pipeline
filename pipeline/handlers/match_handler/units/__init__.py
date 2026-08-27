@@ -1,6 +1,7 @@
 from pipeline.handlers.match_handler.units.match_encoding import MatchEncoding
 from pipeline.handlers.match_handler.units.match_format import MatchFormat
-from pipeline.handlers.match_handler.units.match_localization import MatchLocalization
+from pipeline.handlers.match_handler.units.match_localization import \
+    MatchLocalization
 from pipeline.handlers.match_handler.units.match_network import MatchNetwork
 from pipeline.handlers.match_handler.units.match_regex import MatchRegex
 from pipeline.handlers.match_handler.units.match_text import MatchText

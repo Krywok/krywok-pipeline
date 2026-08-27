@@ -3,19 +3,15 @@ from __future__ import annotations
 import re
 from abc import ABC, abstractmethod
 from functools import cached_property
-from typing import (
-    TYPE_CHECKING, Any, Callable, ClassVar, Generic, Iterable, Optional,
-    TypeVar, get_args
-)
+from typing import (TYPE_CHECKING, Any, Callable, ClassVar, Generic, Iterable,
+                    Optional, TypeVar, get_args)
 
 from pipeline.handlers.base_handler.resources.constants import (
-    Flag, HandlerExpectedTypes, HandlerMode
-)
+    Flag, HandlerExpectedTypes, HandlerMode)
 from pipeline.handlers.base_handler.resources.exceptions import (
     HandlerException, HandlerInvalidArgumentType,
     HandlerInvalidPreferredValueType, HandlerInvalidValueType,
-    HandlerModeMissingContextValue, HandlerModeUnsupported
-)
+    HandlerModeMissingContextValue, HandlerModeUnsupported)
 
 if TYPE_CHECKING:
     from pipeline.core.pipe.resources.types import PipeContext, PipeMetadata

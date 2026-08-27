@@ -5,9 +5,8 @@ from typing import TYPE_CHECKING, Any, NamedTuple
 
 if TYPE_CHECKING:
     from pipeline.core.pipe.resources.types import PipeConfig
-    from pipeline.core.pipeline.resources.types import (
-        PipelineErrors, PipelineHookValue
-    )
+    from pipeline.core.pipeline.resources.types import (PipelineErrors,
+                                                        PipelineHookValue)
 
 
 @dataclass

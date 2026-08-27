@@ -102,7 +102,8 @@ class Condition:
         SUPPORT = (HandlerMode.ROOT, HandlerMode.ITEM, HandlerMode.CONTEXT)
 
         ERROR_TEMPLATES = {
-            HandlerMode.ROOT: lambda self: f"Value must be at most {self.argument}."
+            HandlerMode.ROOT:
+                lambda self: f"Value must be at most {self.argument}."
         }
 
         def query(self):

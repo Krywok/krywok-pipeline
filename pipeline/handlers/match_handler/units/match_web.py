@@ -10,13 +10,13 @@ class MatchWeb:
 
     Includes handlers for Domain and URL.
     """
-
     class Domain(MatchHandler[str, None]):
         """Validates a domain name based on RFC 1035."""
         SUPPORT = (HandlerMode.ROOT, HandlerMode.ITEM)
 
         ERROR_TEMPLATES = {
-            HandlerMode.ROOT: lambda _: "Invalid domain format (e.g., 'example.com')."
+            HandlerMode.ROOT:
+                lambda _: "Invalid domain format (e.g., 'example.com')."
         }
 
         def query(self):

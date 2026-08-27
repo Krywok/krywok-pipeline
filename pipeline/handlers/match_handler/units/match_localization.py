@@ -5,8 +5,7 @@ from zoneinfo import available_timezones
 from pipeline.handlers.base_handler.resources.constants import HandlerMode
 from pipeline.handlers.match_handler.match_handler import MatchHandler
 from pipeline.handlers.match_handler.units.resources.constants import (
-    ISO_639_1, ISO_3166, ISO_4217
-)
+    ISO_639_1, ISO_3166, ISO_4217)
 
 
 class MatchLocalization:

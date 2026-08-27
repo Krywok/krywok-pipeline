@@ -1,9 +1,9 @@
 from typing import ClassVar, Generic, Optional, Type, TypeVar
 
 from pipeline.core.pipe.resources.constants import PipeResult
-from pipeline.core.pipe.resources.types import (
-    PipeConditions, PipeContext, PipeMatches, PipeMetadata, PipeTransform
-)
+from pipeline.core.pipe.resources.types import (PipeConditions, PipeContext,
+                                                PipeMatches, PipeMetadata,
+                                                PipeTransform)
 from pipeline.handlers.condition_handler.condition import Condition
 from pipeline.handlers.condition_handler.resources.constants import \
     ConditionFlag
