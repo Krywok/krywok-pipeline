@@ -20,14 +20,14 @@ class Match:
     This class provides a convenient way to access different match handlers
     (e.g., Text, Regex, Web) from a single location.
     """
-    Text: ClassVar[type[MatchText]] = MatchText
-    Regex: ClassVar[type[MatchRegex]] = MatchRegex
+    Text: ClassVar = MatchText
+    Regex: ClassVar = MatchRegex
 
-    Web: ClassVar[type[MatchWeb]] = MatchWeb
-    Network: ClassVar[type[MatchNetwork]] = MatchNetwork
+    Web: ClassVar = MatchWeb
+    Network: ClassVar = MatchNetwork
 
-    Time: ClassVar[type[MatchTime]] = MatchTime
-    Localization: ClassVar[type[MatchLocalization]] = MatchLocalization
+    Time: ClassVar = MatchTime
+    Localization: ClassVar = MatchLocalization
 
-    Format: ClassVar[type[MatchFormat]] = MatchFormat
-    Encoding: ClassVar[type[MatchEncoding]] = MatchEncoding
+    Format: ClassVar = MatchFormat
+    Encoding: ClassVar = MatchEncoding
