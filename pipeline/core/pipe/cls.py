@@ -61,7 +61,7 @@ class Pipe(Generic[V, T]):
                 Used for data setup (e.g. Strip). Use with caution. Setup runs after type validation, but
                 before conditions, matches, and transform handlers. Only the value type is
                 validated at the time of setup execution.
-            conditions (PipeConditions | NOne): A dictionary of condition handlers and their arguments.
+            conditions (PipeConditions | None): A dictionary of condition handlers and their arguments.
                 Used for logical validation (e.g., `MinLength`, `Equal`).
             matches (PipeMatches | None): A dictionary of match handlers and their arguments.
                 Used for pattern matching (e.g., `Email`, `Regex`).
