@@ -1,15 +1,15 @@
-from typing import ClassVar, Generic, Optional, Type, TypeVar
+from typing import ClassVar, Generic, TypeVar
 
 from pipeline.core.pipe.resources.constants import PipeResult
 from pipeline.core.pipe.resources.types import (
     PipeConditions, PipeContext, PipeMatches, PipeMetadata, PipeTransform
 )
-from pipeline.handlers.condition_handler.condition import Condition
+from pipeline.handlers.condition_handler.registry import Condition
 from pipeline.handlers.condition_handler.resources.constants import \
     ConditionFlag
 from pipeline.handlers.condition_handler.resources.types import ConditionErrors
-from pipeline.handlers.match_handler.match import Match
-from pipeline.handlers.transform_handler.transform import Transform
+from pipeline.handlers.match_handler.registry import Match
+from pipeline.handlers.transform_handler.registry import Transform
 
 V = TypeVar("V")
 T = TypeVar("T", bound=type)
@@ -35,21 +35,21 @@ class Pipe(Generic[V, T]):
         Match (Type[Match]): The match handler class registry.
         Transform (Type[Transform]): The transform handler class registry.
     """
-    Condition: ClassVar[Type[Condition]] = Condition
-    Match: ClassVar[Type[Match]] = Match
-    Transform: ClassVar[Type[Transform]] = Transform
+    Condition: ClassVar = Condition
+    Match: ClassVar = Match
+    Transform: ClassVar = Transform
 
     def __init__(
         self,
         value: V,
         type: T,
-        setup: Optional[PipeTransform] = None,
-        conditions: Optional[PipeConditions] = None,
-        matches: Optional[PipeMatches] = None,
-        transform: Optional[PipeTransform] = None,
-        optional: Optional[bool] = None,
-        context: Optional[PipeContext] = None,
-        metadata: Optional[PipeMetadata] = None
+        setup: PipeTransform | None = None,
+        conditions: PipeConditions | None = None,
+        matches: PipeMatches | None = None,
+        transform: PipeTransform | None = None,
+        optional: bool | None = None,
+        context: PipeContext | None = None,
+        metadata: PipeMetadata | None = None
     ) -> None:
         """
         Initializes the Pipe with a value, type, and processing configurations.
@@ -57,35 +57,35 @@ class Pipe(Generic[V, T]):
         Args:
             value (V): The value to process.
             type (T): The expected type of the value (e.g., `str`, `int`).
-            setup (Optional[PipeTransform]): A dictionary of transform handlers and their arguments.
+            setup (PipeTransform | None): A dictionary of transform handlers and their arguments.
                 Used for data setup (e.g. Strip). Use with caution. Setup runs after type validation, but
                 before conditions, matches, and transform handlers. Only the value type is
                 validated at the time of setup execution.
-            conditions (Optional[PipeConditions]): A dictionary of condition handlers and their arguments.
+            conditions (PipeConditions | NOne): A dictionary of condition handlers and their arguments.
                 Used for logical validation (e.g., `MinLength`, `Equal`).
-            matches (Optional[PipeMatches]): A dictionary of match handlers and their arguments.
+            matches (PipeMatches | None): A dictionary of match handlers and their arguments.
                 Used for pattern matching (e.g., `Email`, `Regex`).
-            transform (Optional[PipeTransform]): A dictionary of transform handlers and their arguments.
+            transform (PipeTransform | None): A dictionary of transform handlers and their arguments.
                 Used for data modification (e.g., `Strip`, `Capitalize`).
-            optional (Optional[bool]): If True, the pipe is skipped if the value is falsy.
-            context (Optional[PipeContext]): Additional context for the handlers, typically the
+            optional (bool | None): If True, the pipe is skipped if the value is falsy.
+            context (PipeContext | None): Additional context for the handlers, typically the
                 entire data dictionary being processed.
-            metadata (Optional[PipeMetadata]): Metadata about the pipe execution.
+            metadata (PipeMetadata | None): Metadata about the pipe execution.
         """
         self.value: V = value
 
         self.type: T = type
 
-        self.setup: Optional[PipeTransform] = setup
+        self.setup: PipeTransform | None = setup
 
-        self.conditions: Optional[PipeConditions] = conditions
-        self.matches: Optional[PipeMatches] = matches
-        self.transform: Optional[PipeTransform] = transform
+        self.conditions: PipeConditions | None = conditions
+        self.matches: PipeMatches | None = matches
+        self.transform: PipeTransform | None = transform
 
-        self.optional: Optional[bool] = optional
+        self.optional: bool | None = optional
 
-        self.context: Optional[PipeContext] = context
-        self.metadata: Optional[PipeMetadata] = metadata
+        self.context: PipeContext | None = context
+        self.metadata: PipeMetadata | None = metadata
 
         self._condition_errors: ConditionErrors = []
         self._match_errors: ConditionErrors = []

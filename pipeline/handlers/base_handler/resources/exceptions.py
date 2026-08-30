@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 from pipeline.handlers.base_handler.resources.constants import HandlerMode
 
 if TYPE_CHECKING:
-    from pipeline.handlers.base_handler.base_handler import BaseHandler
+    from pipeline.handlers.base_handler.cls import BaseHandler
 
 
 class HandlerException(Exception):

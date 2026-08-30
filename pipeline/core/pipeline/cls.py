@@ -1,5 +1,6 @@
 from functools import wraps
-from typing import Any, Callable, ClassVar, ParamSpec, TypeVar
+from typing import Any, ClassVar, ParamSpec, TypeVar
+from collections.abc import Callable
 
 from pipeline.core.pipe.resources.types import PipeConfig, PipeContext
 from pipeline.core.pipeline.resources.constants import (
@@ -174,7 +175,7 @@ class Pipeline:
             field: The name of the field being processed.
             pipe_config: Configuration parameters for the specific pipe.
         """
-        from pipeline.core.pipe.pipe import Pipe
+        from pipeline.core.pipe.cls import Pipe
 
         value: Any = data.get(field, None)
 

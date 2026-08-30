@@ -1,9 +1,4 @@
-from pipeline.handlers.base_handler.base_handler import BaseHandler
-from pipeline.handlers.base_handler.handler_modifiers import Context, Item
+from pipeline.handlers.base_handler.cls import BaseHandler
+from pipeline.handlers.base_handler.modifiers import Context, Item
 
-
-__all__ = [
-    "BaseHandler",
-    "Context",
-    "Item",
-]
+__all__ = ["BaseHandler", "Context", "Item"]

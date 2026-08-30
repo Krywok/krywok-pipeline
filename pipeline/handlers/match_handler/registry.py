@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import ClassVar, Type
+from typing import ClassVar
 
 from pipeline.handlers.match_handler.units.match_encoding import MatchEncoding
 from pipeline.handlers.match_handler.units.match_format import MatchFormat
@@ -20,14 +20,14 @@ class Match:
     This class provides a convenient way to access different match handlers
     (e.g., Text, Regex, Web) from a single location.
     """
-    Text: ClassVar[Type[MatchText]] = MatchText
-    Regex: ClassVar[Type[MatchRegex]] = MatchRegex
+    Text: ClassVar[type[MatchText]] = MatchText
+    Regex: ClassVar[type[MatchRegex]] = MatchRegex
 
-    Web: ClassVar[Type[MatchWeb]] = MatchWeb
-    Network: ClassVar[Type[MatchNetwork]] = MatchNetwork
+    Web: ClassVar[type[MatchWeb]] = MatchWeb
+    Network: ClassVar[type[MatchNetwork]] = MatchNetwork
 
-    Time: ClassVar[Type[MatchTime]] = MatchTime
-    Localization: ClassVar[Type[MatchLocalization]] = MatchLocalization
+    Time: ClassVar[type[MatchTime]] = MatchTime
+    Localization: ClassVar[type[MatchLocalization]] = MatchLocalization
 
-    Format: ClassVar[Type[MatchFormat]] = MatchFormat
-    Encoding: ClassVar[Type[MatchEncoding]] = MatchEncoding
+    Format: ClassVar[type[MatchFormat]] = MatchFormat
+    Encoding: ClassVar[type[MatchEncoding]] = MatchEncoding

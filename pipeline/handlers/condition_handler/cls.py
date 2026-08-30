@@ -1,9 +1,10 @@
 from __future__ import annotations
 
 from abc import abstractmethod
-from typing import TYPE_CHECKING, Any, Callable, ClassVar, Optional, cast
+from typing import TYPE_CHECKING, Any, ClassVar, cast
+from collections.abc import Callable
 
-from pipeline.handlers.base_handler.base_handler import A, BaseHandler, V
+from pipeline.handlers.base_handler.cls import A, BaseHandler, V
 from pipeline.handlers.base_handler.resources.constants import HandlerMode
 from pipeline.handlers.base_handler.resources.exceptions import \
     HandlerModeException
@@ -38,11 +39,11 @@ class ConditionHandler(BaseHandler[V, A]):
         self,
         value: V,
         argument: A,
-        context: Optional[PipeContext] = None,
-        metadata: Optional[PipeMetadata] = None,
+        context: PipeContext | None = None,
+        metadata: PipeMetadata | None = None,
         _mode: HandlerMode = HandlerMode.ROOT,
-        _item_use_key: Optional[bool] = False,
-        _preferred_value_type: Optional[type] = None
+        _item_use_key: bool | None = False,
+        _preferred_value_type: type | None = None
     ) -> None:
         """
         Initializes the ConditionHandler.
@@ -67,24 +68,24 @@ class ConditionHandler(BaseHandler[V, A]):
         """
         ...
 
-    def _handle(self) -> Optional[ConditionError]:
+    def _handle(self) -> ConditionError | None:
         """
         Handles the condition check in ROOT or CONTEXT mode.
 
         Returns:
-            Optional[ConditionError]: An error object if the check fails, None otherwise.
+            ConditionError | None: An error object if the check fails, None otherwise.
         """
         if not self.query():
             return self.ERROR_BUILDER()
 
-    def _handle_item_mode(self) -> Optional[dict[str | int, ConditionError]]:
+    def _handle_item_mode(self) -> dict[str | int, ConditionError] | None:
         """
         Handles the condition check in ITEM mode (for iterables).
 
         Iterates over the input value and applies the check to each item.
 
         Returns:
-            Optional[dict[str | int, ConditionError]]: A dictionary of errors keyed by item index/key,
+            dict[str | int, ConditionError] | None: A dictionary of errors keyed by item index/key,
             or None if no errors occurred.
         
         Raises:

@@ -1,4 +1,5 @@
-from typing import Any, Callable, Protocol
+from typing import Any, Protocol
+from collections.abc import Callable
 
 from pipeline.core.pipeline.resources.constants import PipelineHook
 from pipeline.handlers.condition_handler.resources.types import ConditionErrors

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from pipeline.handlers.base_handler.resources.constants import HandlerMode
-from pipeline.handlers.match_handler.match_handler import MatchHandler
+from pipeline.handlers.match_handler.cls import MatchHandler
 
 
 class MatchTime:

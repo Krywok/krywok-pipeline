@@ -1,5 +1,5 @@
-from pipeline.handlers.transform_handler.transform import Transform
-from pipeline.handlers.transform_handler.transform_handler import TransformHandler
+from pipeline.handlers.transform_handler.cls import TransformHandler
+from pipeline.handlers.transform_handler.registry import Transform
 
 __all__ = [
     "Transform",

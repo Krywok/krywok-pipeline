@@ -3,7 +3,7 @@ from __future__ import annotations
 from abc import abstractmethod
 from typing import cast
 
-from pipeline.handlers.base_handler.base_handler import A, BaseHandler, V
+from pipeline.handlers.base_handler.cls import A, BaseHandler, V
 from pipeline.handlers.base_handler.resources.exceptions import \
     HandlerModeException
 

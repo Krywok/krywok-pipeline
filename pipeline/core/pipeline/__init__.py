@@ -1,3 +1,3 @@
-from pipeline.core.pipeline.pipeline import Pipeline
+from pipeline.core.pipeline.cls import Pipeline
 
 __all__ = ["Pipeline"]

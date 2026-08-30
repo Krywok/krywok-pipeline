@@ -1,23 +1,21 @@
 from __future__ import annotations
 
 from functools import partial
-from typing import Any, NotRequired, Type, TypedDict
+from typing import Any, NotRequired, TypedDict
 
-from pipeline.handlers.condition_handler.condition_handler import \
-    ConditionHandler
-from pipeline.handlers.match_handler.match_handler import MatchHandler
-from pipeline.handlers.transform_handler.transform_handler import \
-    TransformHandler
+from pipeline.handlers.condition_handler.cls import ConditionHandler
+from pipeline.handlers.match_handler.cls import MatchHandler
+from pipeline.handlers.transform_handler.cls import TransformHandler
 
-PipeConditions = dict[Type[ConditionHandler] | partial[ConditionHandler], Any]
-PipeMatches = dict[Type[MatchHandler] | partial[MatchHandler], Any]
-PipeTransform = dict[Type[TransformHandler] | partial[TransformHandler], Any]
+PipeConditions = dict[type[ConditionHandler] | partial[ConditionHandler], Any]
+PipeMatches = dict[type[MatchHandler] | partial[MatchHandler], Any]
+PipeTransform = dict[type[TransformHandler] | partial[TransformHandler], Any]
 
 PipeContext = dict[str, Any]
 PipeMetadata = dict[str, Any]
 
 
-class _BasePipeConfig(TypedDict):
+class _PipeBaseConfig(TypedDict):
     setup: NotRequired[PipeTransform]
 
     conditions: NotRequired[PipeConditions]
@@ -29,9 +27,9 @@ class _BasePipeConfig(TypedDict):
     metadata: NotRequired[PipeMetadata]
 
 
-class PipeConfig(_BasePipeConfig):
+class PipeConfig(_PipeBaseConfig):
     type: type
 
 
-class PipeUpdateConfig(_BasePipeConfig):
+class PipeUpdateConfig(_PipeBaseConfig):
     pass

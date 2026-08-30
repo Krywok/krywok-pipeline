@@ -1,13 +1,14 @@
 from __future__ import annotations
 
-from typing import Any, Iterable
+from typing import Any
+from collections.abc import Iterable
 
-from pipeline.core.pipeline.pipeline import Pipeline
+from pipeline.core.pipeline.cls import Pipeline
 from pipeline.handlers.base_handler.resources.constants import HandlerMode
 from pipeline.handlers.condition_handler.resources.constants import \
     ConditionFlag
 
-from .condition_handler import ConditionHandler
+from .handler import ConditionHandler
 
 
 class Condition:
@@ -102,7 +103,8 @@ class Condition:
         SUPPORT = (HandlerMode.ROOT, HandlerMode.ITEM, HandlerMode.CONTEXT)
 
         ERROR_TEMPLATES = {
-            HandlerMode.ROOT: lambda self: f"Value must be at most {self.argument}."
+            HandlerMode.ROOT:
+                lambda self: f"Value must be at most {self.argument}."
         }
 
         def query(self):

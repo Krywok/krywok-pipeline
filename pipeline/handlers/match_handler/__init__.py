@@ -1,7 +1,4 @@
-from pipeline.handlers.match_handler.match import Match
-from pipeline.handlers.match_handler.match_handler import MatchHandler
+from pipeline.handlers.match_handler.cls import MatchHandler
+from pipeline.handlers.match_handler.registry import Match
 
-__all__ = [
-    "Match",
-    "MatchHandler",
-]
+__all__ = ["Match", "MatchHandler"]

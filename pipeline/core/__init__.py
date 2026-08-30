@@ -1,7 +1,4 @@
-from pipeline.core.pipe.pipe import Pipe
-from pipeline.core.pipeline.pipeline import Pipeline
+from pipeline.core.pipe.cls import Pipe
+from pipeline.core.pipeline.cls import Pipeline
 
-__all__ = [
-    "Pipe",
-    "Pipeline",
-]
+__all__ = ["Pipe", "Pipeline"]

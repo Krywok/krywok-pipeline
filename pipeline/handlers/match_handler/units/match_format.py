@@ -5,7 +5,7 @@ import re
 from pipeline.handlers.base_handler.resources.constants import HandlerMode
 from pipeline.handlers.base_handler.resources.exceptions import \
     HandlerException
-from pipeline.handlers.match_handler.match_handler import MatchHandler
+from pipeline.handlers.match_handler.cls import MatchHandler
 
 
 class MatchFormat:

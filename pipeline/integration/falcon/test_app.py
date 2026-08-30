@@ -1,6 +1,6 @@
 from falcon.asgi import App, Request, Response
 
-from pipeline.core.pipe.pipe import Pipe
+from pipeline.core.pipe.cls import Pipe
 from pipeline.integration.falcon.decorator import process_request
 
 app = App()

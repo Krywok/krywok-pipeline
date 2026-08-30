@@ -1,4 +1,4 @@
-from pipeline.handlers.base_handler.base_handler import Flag
+from pipeline.handlers.base_handler.cls import Flag
 
 
 class ConditionFlag(Flag):

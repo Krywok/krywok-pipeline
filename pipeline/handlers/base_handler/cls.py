@@ -2,11 +2,9 @@ from __future__ import annotations
 
 import re
 from abc import ABC, abstractmethod
+from collections.abc import Callable, Iterable
 from functools import cached_property
-from typing import (
-    TYPE_CHECKING, Any, Callable, ClassVar, Generic, Iterable, Optional,
-    TypeVar, get_args
-)
+from typing import TYPE_CHECKING, Any, ClassVar, Generic, TypeVar, get_args
 
 from pipeline.handlers.base_handler.resources.constants import (
     Flag, HandlerExpectedTypes, HandlerMode
@@ -40,25 +38,25 @@ class BaseHandler(ABC, Generic[V, A]):
             - `HandlerMode.ROOT`: The handler processes the value directly.
             - `HandlerMode.ITEM`: The handler processes each item in a list/dict.
             - `HandlerMode.CONTEXT`: The handler uses another field from the context as an argument.
-        CONTEXT_ARGUMENT_BUILDER (ClassVar[Optional[Callable]]): Helper to build arguments from context.
+        CONTEXT_ARGUMENT_BUILDER (ClassVar[Callable | None]): Helper to build arguments from context.
             Used in CONTEXT mode to transform the context value before using it as an argument.
     """
     FLAGS: ClassVar[tuple[Flag, ...]] = tuple()
 
     SUPPORT: ClassVar[tuple[HandlerMode, ...]] = tuple()
 
-    CONTEXT_ARGUMENT_BUILDER: ClassVar[Optional[Callable[['BaseHandler', Any],
-                                                         Any]]] = None
+    CONTEXT_ARGUMENT_BUILDER: ClassVar[Callable[['BaseHandler', Any], Any] |
+                                       None] = None
 
     def __init__(
         self,
         value: V,
         argument: A,
-        context: Optional[PipeContext] = None,
-        metadata: Optional[PipeMetadata] = None,
+        context: PipeContext | None = None,
+        metadata: PipeMetadata | None = None,
         _mode: HandlerMode = HandlerMode.ROOT,
-        _item_use_key: Optional[bool] = False,
-        _preferred_value_type: Optional[type] = None
+        _item_use_key: bool | None = False,
+        _preferred_value_type: type | None = None
     ) -> None:
         """
         Initializes the BaseHandler.
@@ -66,12 +64,12 @@ class BaseHandler(ABC, Generic[V, A]):
         Args:
             value (V): The value to process.
             argument (A): The argument for the handler.
-            context (Optional[PipeContext]): Additional context for the handler.
-            metadata (Optional[PipeMetadata]): Metadata about the pipe execution.
+            context (PipeContext | None): Additional context for the handler.
+            metadata (PipeMetadata | None): Metadata about the pipe execution.
             _mode (HandlerMode): The mode in which the handler is operating.
-            _item_use_key (Optional[bool]): If True and in ITEM mode, the handler operates on the
+            _item_use_key (bool | None): If True and in ITEM mode, the handler operates on the
                 key of a dictionary item instead of the value.
-            _preferred_value_type (Optional[type]): Specific type to prefer/enforce during type validation.
+            _preferred_value_type (type | None): Specific type to prefer/enforce during type validation.
         """
         self.value: V = value
         self.argument: A = argument
@@ -84,10 +82,10 @@ class BaseHandler(ABC, Generic[V, A]):
 
         self._mode: HandlerMode = _mode
 
-        self._item_index: Optional[int | str] = None
-        self._item_use_key: Optional[bool] = _item_use_key
+        self._item_index: int | str | None = None
+        self._item_use_key: bool | None = _item_use_key
 
-        self._preferred_value_type: Optional[type] = _preferred_value_type
+        self._preferred_value_type: type | None = _preferred_value_type
 
         self._prepare_and_validate_handler()
 
@@ -272,8 +270,6 @@ class BaseHandler(ABC, Generic[V, A]):
 
         if not isinstance(expected_argument_type, tuple):
             expected_argument_type = (expected_argument_type, )
-        else:
-            expected_argument_type = expected_argument_type
 
         if self._preferred_value_type:
             if self._preferred_value_type not in expected_value_types and Any not in expected_value_types:

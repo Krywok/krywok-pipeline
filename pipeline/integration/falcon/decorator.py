@@ -1,7 +1,8 @@
 import inspect
 import json
 from functools import wraps
-from typing import Callable, cast
+from typing import cast
+from collections.abc import Callable
 
 from pipeline.core.pipe.resources.types import PipeConfig
 from pipeline.core.pipeline.resources.constants import PipelineResult
@@ -17,10 +18,10 @@ except ImportError:
         "pip install krywok-pipeline[falcon]"
     )
 
-from pipeline.core.pipeline.pipeline import Pipeline
-from pipeline.core.pipeline.resources.types import (PipelineHandleErrorsFunc,
-                                                    PipelineHookFunc,
-                                                    PipelineTeardownFunc)
+from pipeline.core.pipeline.cls import Pipeline
+from pipeline.core.pipeline.resources.types import (
+    PipelineHandleErrorsFunc, PipelineHookFunc, PipelineTeardownFunc
+)
 
 
 class PipelineFalcon(Pipeline):

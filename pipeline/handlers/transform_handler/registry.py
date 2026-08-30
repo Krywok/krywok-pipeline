@@ -1,9 +1,9 @@
 import re
-from typing import Any, Callable, Optional
+from typing import Any, Optional
+from collections.abc import Callable
 
 from pipeline.handlers.base_handler.resources.constants import HandlerMode
-from pipeline.handlers.transform_handler.transform_handler import \
-    TransformHandler
+from pipeline.handlers.transform_handler.cls import TransformHandler
 
 
 class Transform:

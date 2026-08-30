@@ -1,9 +1,8 @@
 import re
-from typing import Literal, Optional
+from typing import Literal
 
-from pipeline.handlers.base_handler.base_handler import A, V
-from pipeline.handlers.condition_handler.condition_handler import \
-    ConditionHandler
+from pipeline.handlers.base_handler.cls import A, V
+from pipeline.handlers.condition_handler.cls import ConditionHandler
 from pipeline.handlers.match_handler.units.resources.constants import ISO_639_1
 
 
@@ -17,14 +16,14 @@ class MatchHandler(ConditionHandler[V, A]):
     def search(
         self,
         pattern: str | re.Pattern,
-        flag: Optional[re.RegexFlag] = None
+        flag: re.RegexFlag | None = None
     ) -> bool:
         """
         Searches for the pattern in the value.
 
         Args:
             pattern (str | re.Pattern): The regex pattern to search for.
-            flag (Optional[re.RegexFlag]): Optional regex flags.
+            flag (re.RegexFlag | None): Optional regex flags.
 
         Returns:
             bool: True if the pattern is found, False otherwise.
@@ -34,14 +33,14 @@ class MatchHandler(ConditionHandler[V, A]):
     def fullmatch(
         self,
         pattern: str | re.Pattern,
-        flag: Optional[re.RegexFlag] = None
+        flag: re.RegexFlag | None = None
     ) -> bool:
         """
         Checks if the entire value matches the pattern.
 
         Args:
             pattern (str | re.Pattern): The regex pattern to match against.
-            flag (Optional[re.RegexFlag]): Optional regex flags.
+            flag (re.RegexFlag | None): Optional regex flags.
 
         Returns:
             bool: True if the entire value matches the pattern, False otherwise.

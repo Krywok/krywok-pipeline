@@ -1,15 +1,15 @@
 from __future__ import annotations
 
 from functools import partial
-from typing import Optional, Type, TypeVar
+from typing import TypeVar
 
-from pipeline.handlers.base_handler.base_handler import BaseHandler
+from pipeline.handlers.base_handler.cls import BaseHandler
 from pipeline.handlers.base_handler.resources.constants import HandlerMode
 
 T = TypeVar('T', bound=BaseHandler)
 
 
-def Context(handler: Type[T]):
+def Context(handler: type[T]):
     """
     Modifier ensure the handler is run in CONTEXT mode.
 
@@ -26,9 +26,9 @@ def Context(handler: Type[T]):
 
 
 def Item(
-    handler: Type[T] | partial[T],
-    use_key: Optional[bool] = False,
-    only_consider: Optional[type] = None
+    handler: type[T] | partial[T],
+    use_key: bool | None = False,
+    only_consider: type | None = None
 ):
     """
     Modifier to ensure the handler is run in ITEM mode.
@@ -37,8 +37,8 @@ def Item(
 
     Args:
         handler (Type[T] | partial[T]): The handler class or partial to modify.
-        use_key (Optional[bool]): If True, the handler uses the item's key (e.g., in a dictionary) instead of value.
-        only_consider (Optional[type]): Specific type to filter items for processing.
+        use_key (bool | None): If True, the handler uses the item's key (e.g., in a dictionary) instead of value.
+        only_consider (type | None): Specific type to filter items for processing.
 
     Returns:
         partial: A partial application of the handler with ITEM mode settings.
