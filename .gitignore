@@ -255,3 +255,4 @@ Temporary Items
 
 # Own
 /demo*.py
+uv.lock
