@@ -1,14 +1,14 @@
 from __future__ import annotations
 
-from typing import Any
 from collections.abc import Iterable
+from typing import Any
 
 from pipeline.core.pipeline.cls import Pipeline
 from pipeline.handlers.base_handler.resources.constants import HandlerMode
 from pipeline.handlers.condition_handler.resources.constants import \
     ConditionFlag
 
-from .handler import ConditionHandler
+from .cls import ConditionHandler
 
 
 class Condition:
