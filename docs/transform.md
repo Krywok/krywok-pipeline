@@ -26,14 +26,14 @@ Both `setup` and `transform` use transform handlers, but they run at different s
 Use `setup` when you need to normalize data **before** validation:
 
 ```python
-from pipeline import Pipe
+from pipeline import Pipe, Match, Transform
 
 # Setup strips whitespace BEFORE checking email format
 result = Pipe(
     value="  user@example.com  ",
     type=str,
-    setup={Pipe.Transform.Strip: None},  # Runs first
-    matches={Pipe.Match.Format.Email: None},  # Validates cleaned value
+    setup={Transform.Strip: None},  # Runs first
+    matches={Match.Format.Email: None},  # Validates cleaned value
 ).run()
 
 print(result.value)  # "user@example.com" (no spaces)
@@ -44,14 +44,14 @@ print(result.value)  # "user@example.com" (no spaces)
 Use `transform` when you need to modify data **after** validation:
 
 ```python
-from pipeline import Pipe
+from pipeline import Pipe, Match, Transform
 
 # Transform lowercases AFTER validation passes
 result = Pipe(
     value="User@Example.COM",
     type=str,
-    matches={Pipe.Match.Format.Email: None},  # Validates first
-    transform={Pipe.Transform.Lowercase: None}  # Formats after validation
+    matches={Match.Format.Email: None},  # Validates first
+    transform={Transform.Lowercase: None}  # Formats after validation
 ).run()
 
 print(result.value)  # "user@example.com"
@@ -62,15 +62,15 @@ print(result.value)  # "user@example.com"
 You can use both together for a complete data processing pipeline:
 
 ```python
-from pipeline import Pipe
+from pipeline import Pipe, Condition, Match, Transform, Match, Transform
 
 result = Pipe(
     value="  User@Example.COM  ",
     type=str,
-    setup={Pipe.Transform.Strip: None},  # 1. Clean input
-    conditions={Pipe.Condition.MaxLength: 50},  # 2. Validate structure
-    matches={Pipe.Match.Format.Email: None},  # 3. Validate format
-    transform={Pipe.Transform.Lowercase: None}  # 4. Format output
+    setup={Transform.Strip: None},  # 1. Clean input
+    conditions={Condition.MaxLength: 50},  # 2. Validate structure
+    matches={Match.Format.Email: None},  # 3. Validate format
+    transform={Transform.Lowercase: None}  # 4. Format output
 ).run()
 
 print(result.value)  # "user@example.com"
@@ -97,13 +97,12 @@ user_pipeline = Pipeline(
 
 # Add custom transformation via pre_hook
 def custom_transform(hook):
-    current_value = hook.value.get
     if hook.field == "name":
         # Custom logic: Title case
-        hook.value.set(current_value.title())
+        hook.value = hook.value.title()
     elif hook.field == "email":
         # Custom logic: Lowercase and strip
-        hook.value.set(current_value.lower().strip())
+        hook.value = hook.value.lower().strip()
 
 user_pipeline.pre_hook = custom_transform
 
@@ -129,9 +128,9 @@ print(result.processed_data)
 
     ```text
     transform={
-        Pipe.Transform.Strip: None,      # 1. Remove whitespace
-        Pipe.Transform.Lowercase: None,  # 2. Convert to lowercase
-        Pipe.Transform.Capitalize: None  # 3. Capitalize
+        Transform.Strip: None,      # 1. Remove whitespace
+        Transform.Lowercase: None,  # 2. Convert to lowercase
+        Transform.Capitalize: None  # 3. Capitalize
     }
     ```
 
@@ -142,9 +141,9 @@ print(result.processed_data)
     ```text
     email={
         "type": str,
-        "conditions": {Pipe.Condition.MaxLength: 64},  # Validate
-        "matches": {Pipe.Match.Format.Email: None},    # Validate
-        "transform": {Pipe.Transform.Lowercase: None}  # Transform
+        "conditions": {Condition.MaxLength: 64},  # Validate
+        "matches": {Match.Format.Email: None},    # Validate
+        "transform": {Transform.Lowercase: None}  # Transform
     }
     ```
 
@@ -157,7 +156,7 @@ print(result.processed_data)
     Pipe(
         value=123,  # Wrong type
         type=str,
-        transform={Pipe.Transform.Lowercase: None}
+        transform={Transform.Lowercase: None}
     )
     ```
 
@@ -167,4 +166,4 @@ print(result.processed_data)
 
 The following section is automatically generated from the source code, detailing transformation handlers like string manipulation, math operations, and unique filtering.
 
-::: pipeline.handlers.transform_handler.transform
+::: handlers.transform.registry

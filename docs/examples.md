@@ -9,14 +9,14 @@ Krywok Pipeline is designed to be flexible, allowing you to use it as a standalo
 A `Pipe` is the smallest unit of logic. It allows you to validate a single value against specific conditions, matches, and transformations.
 
 ```python
-from pipeline import Pipe
+from pipeline import Pipe, Condition, Match, Transform
 
 pipe = Pipe(
     value="john.SMITH@example.com",
     type=str,
-    conditions={Pipe.Condition.MaxLength: 64},
-    matches={Pipe.Match.Format.Email: None},
-    transform={Pipe.Transform.Lowercase: None}
+    conditions={Condition.MaxLength: 64},
+    matches={Match.Format.Email: None},
+    transform={Transform.Lowercase: None}
 )
 
 result = pipe.run()
@@ -30,24 +30,24 @@ print(result.match_errors)  # []
 The `setup` argument allows you to prepare data before validation. This is useful for normalizing input (like stripping whitespace) before running conditions or matches:
 
 ```python
-from pipeline import Pipe
+from pipeline import Pipe, Condition, Match, Transform
 
 # Without setup - validation might fail due to whitespace
 pipe_without_setup = Pipe(
     value="  USER@example.com  ",
     type=str,
-    conditions={Pipe.Condition.MaxLength: 18},  # Will fail: length is 21 with spaces
-    matches={Pipe.Match.Format.Email: None}
+    conditions={Condition.MaxLength: 18},  # Will fail: length is 21 with spaces
+    matches={Match.Format.Email: None}
 )
 
 # With setup - whitespace is stripped before validation
 pipe_with_setup = Pipe(
     value="  USER@example.com  ",
     type=str,
-    setup={Pipe.Transform.Strip: None},  # Runs first, before validation
-    conditions={Pipe.Condition.MaxLength: 18},  # Now passes: length is 16
-    matches={Pipe.Match.Format.Email: None},
-    transform={Pipe.Transform.Lowercase: None}
+    setup={Transform.Strip: None},  # Runs first, before validation
+    conditions={Condition.MaxLength: 18},  # Now passes: length is 16
+    matches={Match.Format.Email: None},
+    transform={Transform.Lowercase: None}
 )
 
 result = pipe_with_setup.run()
@@ -66,33 +66,33 @@ print(result.condition_errors)  # []
 The `Pipeline` class allows you to define complex schemas for dictionaries. It supports nested pipelines, metadata handling, and custom hooks.
 
 ```python
-from pipeline import Pipeline, Pipe
+from pipeline import Pipeline, Pipe, Condition, Match, Transform
 
 # Define a pipeline for a 'Person' object
 person_pipeline = Pipeline(
     name={
         "type": str,
-        "conditions": {Pipe.Condition.MaxLength: 50},
-        "matches": {Pipe.Match.Text.LettersWithSpaces: None},
-        "transform": {Pipe.Transform.Title: None}
+        "conditions": {Condition.MaxLength: 50},
+        "matches": {Match.Text.LettersWithSpaces: None},
+        "transform": {Transform.Title: None}
     },
     age={
         "type": int,
         "conditions": {
-            Pipe.Condition.MinNumber: 0,
-            Pipe.Condition.MaxNumber: 120
+            Condition.MinNumber: 0,
+            Condition.MaxNumber: 120
         }
     },
     email={
         "type": str,
-        "conditions": {Pipe.Condition.MaxLength: 64},
-        "matches": {Pipe.Match.Format.Email: None},
-        "transform": {Pipe.Transform.Lowercase: None}
+        "conditions": {Condition.MaxLength: 64},
+        "matches": {Match.Format.Email: None},
+        "transform": {Transform.Lowercase: None}
     },
     bio={
         "type": str,
-        "conditions": {Pipe.Condition.MaxLength: 500},
-        "matches": {Pipe.Match.Text.Printable: None},
+        "conditions": {Condition.MaxLength: 500},
+        "matches": {Match.Text.Printable: None},
         "optional": True
     }
 )
@@ -122,18 +122,17 @@ print(result.processed_data, result.errors)
 Apply validation to each item in a list or dictionary:
 
 ```python
-from pipeline import Pipe
-from pipeline.handlers import Item
+from pipeline import Pipe, Item, Match, Transform
 
 # Validate a list of email addresses
 result = Pipe(
     value=["aDMIN@company.com", "user@comPANy.com", "support@COmpany.com"],
     type=list,
     matches={
-        Item(Pipe.Match.Format.Email): None
+        Item(Match.Format.Email): None
     },
     transform={
-        Item(Pipe.Transform.Lowercase): None
+        Item(Transform.Lowercase): None
     }
 ).run()
 
@@ -146,21 +145,20 @@ print(result.value)
 Validate fields based on other field values:
 
 ```python
-from pipeline import Pipeline, Pipe
-from pipeline.handlers import Context
+from pipeline import Pipeline, Pipe, Context, Condition, Match
 
 # Password confirmation example
 registration_pipeline = Pipeline(
     password={
         "type": str,
         "matches": {
-            Pipe.Match.Format.Password: Pipe.Match.Format.Password.STRICT
+            Match.Format.Password: Match.Format.Password.STRICT
         }
     },
     password_confirm={
         "type": str,
         "conditions": {
-            Context(Pipe.Condition.MatchesField): "password"
+            Context(Condition.MatchesField): "password"
         }
     }
 )
@@ -183,26 +181,24 @@ Hooks allow you to inject custom logic before and after each pipe execution.
 ### Pre-Hook: Global Sanitization
 
 ```python
-from pipeline import Pipeline, Pipe
+from pipeline import Pipeline, Pipe, Condition, Match
 
 # Define a pipeline
 user_pipeline = Pipeline(
     username={
         "type": str,
-        "conditions": {Pipe.Condition.MaxLength: 20}
+        "conditions": {Condition.MaxLength: 20}
     },
     email={
         "type": str,
-        "matches": {Pipe.Match.Format.Email: None}
+        "matches": {Match.Format.Email: None}
     }
 )
 
 # Attach a pre-hook to strip whitespace from all strings
 def sanitize_strings(hook):
-    current_value = hook.value.get
-
-    if isinstance(current_value, str):
-        hook.value.set(current_value.strip())
+    if isinstance(hook.value, str):
+        hook.value = hook.value.strip()
 
 user_pipeline.pre_hook = sanitize_strings
 
@@ -219,19 +215,19 @@ print(result.processed_data)
 ### Post-Hook: Logging and Redaction
 
 ```python
-from pipeline import Pipeline, Pipe
+from pipeline import Pipeline, Pipe, Condition, Match
 
 # Pipeline with sensitive data
 auth_pipeline = Pipeline(
     username={"type": str},
     password={
         "type": str,
-        "matches": {Pipe.Match.Format.Password: Pipe.Match.Format.Password.STRICT},
+        "matches": {Match.Format.Password: Match.Format.Password.STRICT},
         "metadata": {"sensitive": True}
     },
     api_key={
         "type": str,
-        "conditions": {Pipe.Condition.MinLength: 32},
+        "conditions": {Condition.MinLength: 32},
         "metadata": {"sensitive": True}
     }
 )
@@ -245,8 +241,7 @@ def log_with_redaction(hook):
     if metadata.get('sensitive'):
         print(f"[{status}] Field '{hook.field}': [REDACTED]")
     else:
-        current_value = hook.value.get
-        print(f"[{status}] Field '{hook.field}': {current_value}")
+        print(f"[{status}] Field '{hook.field}': {hook.value}")
 
 auth_pipeline.post_hook = log_with_redaction
 
@@ -269,7 +264,7 @@ result = auth_pipeline.run(data={
 Create reusable pipeline classes with built-in behavior:
 
 ```python
-from pipeline import Pipeline, Pipe
+from pipeline import Pipeline, Pipe, Condition, Match
 import logging
 
 class LoggingPipeline(Pipeline):
@@ -299,11 +294,11 @@ logging.basicConfig(level=logging.INFO)
 api_pipeline = LoggingPipeline(
     email={
         "type": str,
-        "matches": {Pipe.Match.Format.Email: None}
+        "matches": {Match.Format.Email: None}
     },
     age={
         "type": int,
-        "conditions": {Pipe.Condition.MinNumber: 18}
+        "conditions": {Condition.MinNumber: 18}
     }
 )
 
@@ -326,15 +321,14 @@ result = api_pipeline.run(data={
 Customize error messages for better user experience:
 
 ```python
-from pipeline.handlers import ConditionHandler, ConditionFlag, HandlerMode
-from pipeline import Pipe
+from pipeline import Pipe, ConditionHandler, ConditionFlag, HandlerMode, Condition, Match
 
 # Customize error messages
-Pipe.Match.Format.Email.ERROR_TEMPLATES[HandlerMode.ROOT] = lambda _: (
+Match.Format.Email.ERROR_TEMPLATES[HandlerMode.ROOT] = lambda _: (
     "Please provide a valid email address."
 )
 
-Pipe.Condition.MinLength.ERROR_TEMPLATES[HandlerMode.ROOT] = lambda self: (
+Condition.MinLength.ERROR_TEMPLATES[HandlerMode.ROOT] = lambda self: (
     f"Must be at least {self.argument} characters long."
 )
 
@@ -345,9 +339,9 @@ def my_error_builder(self: "ConditionHandler"):
 # It does not have to be global.
 ConditionHandler.ERROR_BUILDER = my_error_builder
 
-Pipe.Match.Format.Password.ERROR_MESSAGE[Pipe.Match.Format.Password.STRICT] = "I'm very strict."
+Match.Format.Password.ERROR_MESSAGE[Match.Format.Password.STRICT] = "I'm very strict."
 
-Pipe.Match.Format.Password.ERROR_TEMPLATES[HandlerMode.ROOT] = lambda self: (
+Match.Format.Password.ERROR_TEMPLATES[HandlerMode.ROOT] = lambda self: (
     f"Password requirements: {self.ERROR_MESSAGE[self.argument]}"
 )
 
@@ -355,7 +349,7 @@ Pipe.Match.Format.Password.ERROR_TEMPLATES[HandlerMode.ROOT] = lambda self: (
 result = Pipe(
     value="ab",
     type=str,
-    conditions={Pipe.Condition.MinLength: 8}
+    conditions={Condition.MinLength: 8}
 ).run()
 
 print(result.condition_errors)
@@ -369,19 +363,18 @@ print(result.condition_errors)
 Wrap functions to ensure arguments are validated before execution:
 
 ```python
-from pipeline.core.pipeline.resources.exceptions import PipelineException
-from pipeline import Pipeline, Pipe
+from pipeline import Pipeline, PipelineException, Pipe, Condition, Match, Transform
 
 @Pipeline(
     amount={
         'type': int,
-        'conditions': {Pipe.Condition.MinNumber: 1},
-        'transform': {Pipe.Transform.Multiply: 100}  # Convert to cents
+        'conditions': {Condition.MinNumber: 1},
+        'transform': {Transform.Multiply: 100}  # Convert to cents
     },
     currency={
         'type': str,
-        'matches': {Pipe.Match.Localization.Currency: None},
-        'transform': {Pipe.Transform.Reverse: None}
+        'matches': {Match.Localization.Currency: None},
+        'transform': {Transform.Reverse: None}
     }
 )
 def process_payment(amount, currency):
@@ -407,28 +400,28 @@ except PipelineException as e:
 Validate nested data structures:
 
 ```python
-from pipeline import Pipeline, Pipe
+from pipeline import Pipeline, Pipe, Condition, Match
 
 # Define nested pipeline for address
 address_pipeline = Pipeline(
-    street={"type": str, "conditions": {Pipe.Condition.MaxLength: 100}},
-    city={"type": str, "conditions": {Pipe.Condition.MaxLength: 50}},
+    street={"type": str, "conditions": {Condition.MaxLength: 100}},
+    city={"type": str, "conditions": {Condition.MaxLength: 50}},
     zip_code={
         "type": str,
-        "matches": {Pipe.Match.Regex.FullMatch: r"^\d{5}$"}
+        "matches": {Match.Regex.FullMatch: r"^\d{5}$"}
     }
 )
 
 # Main pipeline with nested address
 user_pipeline = Pipeline(
-    name={"type": str, "conditions": {Pipe.Condition.MaxLength: 50}},
+    name={"type": str, "conditions": {Condition.MaxLength: 50}},
     email={
         "type": str,
-        "matches": {Pipe.Match.Format.Email: None}
+        "matches": {Match.Format.Email: None}
     },
     address={
         "type": dict,
-        "conditions": {Pipe.Condition.Pipeline: address_pipeline}
+        "conditions": {Condition.Pipeline: address_pipeline}
     }
 )
 
@@ -452,23 +445,22 @@ print(result.processed_data)
 Combine multiple features for complex validation:
 
 ```python
-from pipeline import Pipeline, Pipe
-from pipeline.handlers import Item
+from pipeline import Pipeline, Pipe, Item, Condition, Match, Transform
 
 # E-commerce order validation
 order_pipeline = Pipeline(
     customer_email={
         "type": str,
-        "conditions": {Pipe.Condition.MaxLength: 64},
-        "matches": {Pipe.Match.Format.Email: None},
-        "transform": {Pipe.Transform.Lowercase: None}
+        "conditions": {Condition.MaxLength: 64},
+        "matches": {Match.Format.Email: None},
+        "transform": {Transform.Lowercase: None}
     },
     items={
         "type": list,
         "conditions": {
-            Pipe.Condition.MinLength: 1,
-            Pipe.Condition.MaxLength: 50,
-            Item(Pipe.Condition.IncludedIn): [
+            Condition.MinLength: 1,
+            Condition.MaxLength: 50,
+            Item(Condition.IncludedIn): [
                 "water",
                 "sushi",
                 "pizza"
@@ -478,15 +470,15 @@ order_pipeline = Pipeline(
     total_amount={
         "type": float,
         "conditions": {
-            Pipe.Condition.MinNumber: 0.01,
-            Pipe.Condition.MaxNumber: 10000.00
+            Condition.MinNumber: 0.01,
+            Condition.MaxNumber: 10000.00
         }
     },
     discount_code={
         "type": str,
-        "conditions": {Pipe.Condition.MaxLength: 20},
-        "matches": {Pipe.Match.Text.Alphanumeric: None},
-        "transform": {Pipe.Transform.Uppercase: None},
+        "conditions": {Condition.MaxLength: 20},
+        "matches": {Match.Text.Alphanumeric: None},
+        "transform": {Transform.Uppercase: None},
         "optional": True
     }
 )
@@ -494,10 +486,8 @@ order_pipeline = Pipeline(
 # Add hooks for business logic
 def validate_total(hook):
     """Ensure total amount is reasonable"""
-    current_value = hook.value.get
-
-    if hook.field == "total_amount" and current_value > 5000:
-        print(f"[!] Large order detected: ${current_value}")
+    if hook.field == "total_amount" and hook.value > 5000:
+        print(f"[!] Large order detected: ${hook.value}")
 
 # You can also pass a post_hook in __init__
 order_pipeline.post_hook = validate_total

@@ -25,20 +25,20 @@ The `process_request` decorator validates incoming request data and injects vali
 ```python
 from falcon import App
 from pipeline.integration.falcon import process_request
-from pipeline import Pipe
+from pipeline import Pipe, Condition, Match
 
 class UserResource:
     @process_request(
         email={
             "type": str,
-            "conditions": {Pipe.Condition.MaxLength: 64},
-            "matches": {Pipe.Match.Format.Email: None}
+            "conditions": {Condition.MaxLength: 64},
+            "matches": {Match.Format.Email: None}
         },
         age={
             "type": int,
             "conditions": {
-                Pipe.Condition.MinNumber: 18,
-                Pipe.Condition.MaxNumber: 120
+                Condition.MinNumber: 18,
+                Condition.MaxNumber: 120
             }
         }
     )
@@ -81,7 +81,7 @@ app.add_route('/users', UserResource())
 ```python
 from falcon import App, Request, Response
 
-from pipeline import Pipe
+from pipeline import Pipe, Condition, Match, Transform
 from pipeline.integration.falcon import process_request
 
 
@@ -91,42 +91,42 @@ class RegistrationResource:
             "type": str,
             "conditions":
                 {
-                    Pipe.Condition.MinLength: 3,
-                    Pipe.Condition.MaxLength: 20
+                    Condition.MinLength: 3,
+                    Condition.MaxLength: 20
                 },
             "matches": {
-                Pipe.Match.Text.Alphanumeric: None
+                Match.Text.Alphanumeric: None
             },
             "transform": {
-                Pipe.Transform.Lowercase: None
+                Transform.Lowercase: None
             }
         },
         email={
             "type": str,
             "conditions": {
-                Pipe.Condition.MaxLength: 64
+                Condition.MaxLength: 64
             },
             "matches": {
-                Pipe.Match.Format.Email: None
+                Match.Format.Email: None
             },
             "transform": {
-                Pipe.Transform.Lowercase: None
+                Transform.Lowercase: None
             }
         },
         password={
             "type": str,
             "matches":
                 {
-                    Pipe.Match.Format.Password:
-                        Pipe.Match.Format.Password.STRICT
+                    Match.Format.Password:
+                        Match.Format.Password.STRICT
                 }
         },
         age={
             "type": int,
             "conditions":
                 {
-                    Pipe.Condition.MinNumber: 18,
-                    Pipe.Condition.MaxNumber: 120
+                    Condition.MinNumber: 18,
+                    Condition.MaxNumber: 120
                 },
             "optional": True
         }
@@ -237,30 +237,30 @@ The decorator also works with GET requests, validating query parameters:
 ```python
 from falcon import App
 from pipeline.integration.falcon import process_request
-from pipeline import Pipe
+from pipeline import Pipe, Condition
 
 class SearchResource:
     @process_request(
         query={
             "type": str,
             "conditions": {
-                Pipe.Condition.MinLength: 3,
-                Pipe.Condition.MaxLength: 100
+                Condition.MinLength: 3,
+                Condition.MaxLength: 100
             }
         },
         page={
             "type": int,
             "conditions": {
-                Pipe.Condition.MinNumber: 1,
-                Pipe.Condition.MaxNumber: 1000
+                Condition.MinNumber: 1,
+                Condition.MaxNumber: 1000
             },
             "optional": True
         },
         limit={
             "type": int,
             "conditions": {
-                Pipe.Condition.MinNumber: 1,
-                Pipe.Condition.MaxNumber: 100
+                Condition.MinNumber: 1,
+                Condition.MaxNumber: 100
             },
             "optional": True
         }
@@ -295,13 +295,13 @@ The decorator automatically detects and supports ASGI applications:
 ```python
 from falcon.asgi import App, Request, Response
 from pipeline.integration.falcon import process_request
-from pipeline import Pipe
+from pipeline import Pipe, Match
 
 class AsyncUserResource:
     @process_request(
         email={
             "type": str,
-            "matches": {Pipe.Match.Format.Email: None}
+            "matches": {Match.Format.Email: None}
         }
     )
     async def on_post(self, req: Request, resp: Response, email: str):
@@ -332,7 +332,7 @@ The global error handler should **raise an exception** with your custom error fo
 ```python
 from falcon import HTTPBadRequest
 from pipeline.integration.falcon import PipelineFalcon, process_request
-from pipeline import Pipe
+from pipeline import Pipe, Match
 
 def custom_error_handler(errors: dict):
     """
@@ -377,7 +377,7 @@ class UserResource:
     @process_request(
         email={
             "type": str,
-            "matches": {Pipe.Match.Format.Email: None}
+            "matches": {Match.Format.Email: None}
         }
     )
     def on_post(self, req, resp, email):
@@ -391,7 +391,7 @@ If you need different error handling for specific pipelines, you can pass `handl
 ```python
 from falcon import HTTPBadRequest
 from pipeline.integration.falcon import process_request
-from pipeline import Pipe
+from pipeline import Pipe, Match
 
 def strict_error_handler(errors: dict):
     """Strict error handler that includes detailed information"""
@@ -406,7 +406,7 @@ def strict_error_handler(errors: dict):
 
 class StrictResource:
     @process_request(
-        email={"type": str, "matches": {Pipe.Match.Format.Email: None}},
+        email={"type": str, "matches": {Match.Format.Email: None}},
         handle_errors=strict_error_handler  # Override global handler
     )
     def on_post(self, req, resp, email):
@@ -450,7 +450,7 @@ While Krywok Pipeline currently has built-in support for Falcon, you can easily 
 
 ```python
 from flask import Flask, request, jsonify
-from pipeline import Pipeline, Pipe
+from pipeline import Pipeline, Pipe, Condition, Match
 
 app = Flask("test_app")
 
@@ -460,11 +460,11 @@ def create_user():
     user_pipeline = Pipeline(
         email={
             "type": str,
-            "matches": {Pipe.Match.Format.Email: None}
+            "matches": {Match.Format.Email: None}
         },
         age={
             "type": int,
-            "conditions": {Pipe.Condition.MinNumber: 18}
+            "conditions": {Condition.MinNumber: 18}
         }
     )
 

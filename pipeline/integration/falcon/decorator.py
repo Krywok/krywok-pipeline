@@ -1,10 +1,11 @@
 import inspect
 import json
+from collections.abc import Callable
 from functools import wraps
-from typing import Callable, cast
+from typing import cast
 
-from pipeline.core.pipe.resources.types import PipeConfig
-from pipeline.core.pipeline.resources.constants import PipelineResult
+from pipeline.pipe.resources.types import PipeConfig
+from pipeline.pipeline.resources.constants import PipelineResult
 
 try:
     from falcon import Request as RequestSync
@@ -17,10 +18,10 @@ except ImportError:
         "pip install krywok-pipeline[falcon]"
     )
 
-from pipeline.core.pipeline.pipeline import Pipeline
-from pipeline.core.pipeline.resources.types import (PipelineHandleErrorsFunc,
-                                                    PipelineHookFunc,
-                                                    PipelineTeardownFunc)
+from pipeline.pipeline.cls import Pipeline
+from pipeline.pipeline.resources.types import (
+    PipelineHandleErrorsFunc, PipelineHookFunc, PipelineTeardownFunc
+)
 
 
 class PipelineFalcon(Pipeline):
@@ -73,10 +74,10 @@ def process_request(
             email={
                 "type": str,
                 "conditions": {
-                    Pipe.Condition.MaxLength: 64
+                    Condition.MaxLength: 64
                 },
                 "matches": {
-                    Pipe.Match.Format.Email: None
+                    Match.Format.Email: None
                 }
             }
         )

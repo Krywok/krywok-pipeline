@@ -7,7 +7,7 @@ The **Battery** module provides a DRY (Don't Repeat Yourself) pattern for sharin
 ## Core Concepts
 
 | Class         | Responsibility                                                         |
-|---------------|------------------------------------------------------------------------|
+| ------------- | ---------------------------------------------------------------------- |
 | `BatteryUnit` | Stores a single pipe configuration                                     |
 | `Battery`     | A centralized registry of pre-built and custom `BatteryUnit` instances |
 
@@ -22,7 +22,7 @@ A `BatteryUnit` is a container for a reusable pipe configuration. It exposes a s
 The `sink()` method is the primary way to use a `BatteryUnit`. It returns a `PipeConfig` dictionary ready to be unpacked into a `Pipeline`.
 
 ```python
-from pipeline.battery import Battery
+from pipeline import Pipeline, Battery
 
 # Use a built-in unit as-is
 Pipeline(
@@ -48,19 +48,18 @@ Pipeline(
 Register your own units at application startup to make them available globally:
 
 ```python
-from pipeline import Pipe
-from pipeline.battery import Battery
+from pipeline import Pipe, Battery, Condition, Match, Transform
 
 # Register custom unit
 Battery.add(
     name="Username",
     type=str,
     conditions={
-        Pipe.Condition.MinLength: 3,
-        Pipe.Condition.MaxLength: 20
+        Condition.MinLength: 3,
+        Condition.MaxLength: 20
     },
-    matches={Pipe.Match.Text.Alphanumeric: None},
-    transform={Pipe.Transform.Lowercase: None}
+    matches={Match.Text.Alphanumeric: None},
+    transform={Transform.Lowercase: None}
 )
 ```
 
@@ -78,16 +77,15 @@ Pipeline(
 ## Real-World Example
 
 ```python
-from pipeline import Pipeline, Pipe
-from pipeline.battery import Battery
+from pipeline import Pipeline, Pipe, Battery, Condition, Match, Transform
 
 # Register application-wide units once (e.g., in app startup)
 Battery.add(
     name="ProductSKU",
     type=str,
-    conditions={Pipe.Condition.ExactLength: 8},
-    matches={Pipe.Match.Text.Alphanumeric: None},
-    transform={Pipe.Transform.Uppercase: None}
+    conditions={Condition.ExactLength: 8},
+    matches={Match.Text.Alphanumeric: None},
+    transform={Transform.Uppercase: None}
 )
 
 # Reuse across multiple endpoints without duplication
@@ -108,6 +106,6 @@ update_order_pipeline = Pipeline(
 
 ## Technical Reference
 
-::: pipeline.battery.unit.BatteryUnit
+::: battery.cls
 
-::: pipeline.battery.battery.Battery
+::: battery.unit

@@ -33,31 +33,20 @@ Both hooks receive a `PipelineHook` object with the following properties:
 | Property      | Type           | Description                                                 |
 | ------------- | -------------- | ----------------------------------------------------------- |
 | `field`       | `str`          | The name of the field being processed                       |
-| `value`       | `Value`        | Value object with `.get` property and `.set()` method       |
+| `value`       | `Any`          | The field value being processed                             |
 | `is_valid`    | `bool or None` | Validation status (`None` in pre_hook, `bool` in post_hook) |
 | `pipe_config` | `dict`         | The pipe configuration including metadata                   |
 
 ### Accessing and Modifying Values
 
-The `hook.value` object uses a closure-based mechanism to allow direct manipulation of values during pipe execution.
-
-!!! note "Value Class Mechanism"
-
-    - `hook.value.get` is a **property** (not a method) - access it without parentheses
-    - `hook.value.set(new_value)` is a **method** - call it with parentheses
-    - The Value class uses Python's `nonlocal` to modify the actual value in the pipeline's scope
+The `hook.value` property allows reading and direct reassignment of the value during pipe execution.
 
 ```python
 def my_hook(hook):
-    # Get the current value (property access)
-    current_value = hook.value.get
-
-    # Set a new value (method call)
-    hook.value.set("new value")
-
-    # Common pattern: conditional modification
-    if isinstance(current_value, str):
-        hook.value.set(current_value.strip())
+    # Get the value (property access)
+    if isinstance(hook.value, str):
+        # Set a new value (property assignment)
+        hook.value = hook.value.strip()
 ```
 
 ---
@@ -71,15 +60,13 @@ Krywok Pipeline offers **three flexible ways** to customize hooks, from global t
 Set hooks globally for **all instances** of the `Pipeline` class:
 
 ```python
-from pipeline import Pipeline, Pipe
+from pipeline import Pipeline, Pipe, Condition, Match
 
 # Define global hooks
 def global_pre_hook(hook):
     """Strip all string values globally"""
-    current_value = hook.value.get
-
-    if isinstance(current_value, str):
-        hook.value.set(current_value.strip())
+    if isinstance(hook.value, str):
+        hook.value = hook.value.strip()
 
 def global_post_hook(hook):
     """Log all validation failures globally"""
@@ -92,11 +79,11 @@ Pipeline.global_post_hook = global_post_hook
 
 # Now ALL pipelines will use these hooks
 pipeline1 = Pipeline(
-    name={"type": str, "conditions": {Pipe.Condition.MaxLength: 10}}
+    name={"type": str, "conditions": {Condition.MaxLength: 10}}
 )
 
 pipeline2 = Pipeline(
-    email={"type": str, "matches": {Pipe.Match.Format.Email: None}}
+    email={"type": str, "matches": {Match.Format.Email: None}}
 )
 
 # Both pipelines will strip strings and log failures
@@ -111,18 +98,18 @@ pipeline2.run(data={"email": "invalid"})  # Logs failure
 Set hooks for a **specific pipeline instance**:
 
 ```python
-from pipeline import Pipeline, Pipe
+from pipeline import Pipeline, Pipe, Condition, Match
 
 # Create a pipeline
 user_pipeline = Pipeline(
     username={
         "type": str,
-        "conditions": {Pipe.Condition.MaxLength: 20}
+        "conditions": {Condition.MaxLength: 20}
     },
     password={
         "type": str,
         "matches": {
-            Pipe.Match.Format.Password: Pipe.Match.Format.Password.STRICT
+            Match.Format.Password: Match.Format.Password.STRICT
         },
         "metadata": {
             "sensitive": True
@@ -131,7 +118,7 @@ user_pipeline = Pipeline(
     email={
         "type": str,
         "matches": {
-            Pipe.Match.Format.Email: None
+            Match.Format.Email: None
         }
     }
 )
@@ -139,9 +126,9 @@ user_pipeline = Pipeline(
 # Set instance-specific hooks
 def sanitize_input(hook):
     """Sanitize input for this specific pipeline"""
-    if isinstance(hook.value.get, str):
+    if isinstance(hook.value, str):
         # Remove leading/trailing whitespace
-        hook.value.set(hook.value.get.strip())
+        hook.value = hook.value.strip()
 
 def redact_sensitive_data(hook):
     """Redact sensitive fields in logs"""
@@ -152,7 +139,7 @@ def redact_sensitive_data(hook):
     if metadata.get('sensitive'):
         print(f"[{status}] Field '{hook.field}': [REDACTED]")
     else:
-        print(f"[{status}] Field '{hook.field}': {hook.value.get}")
+        print(f"[{status}] Field '{hook.field}': {hook.value}")
 
 # Attach to this instance only
 user_pipeline.pre_hook = sanitize_input
@@ -178,7 +165,7 @@ result = user_pipeline.run(data={
 Create a **custom Pipeline subclass** with built-in hook logic:
 
 ```python
-from pipeline import Pipeline, Pipe
+from pipeline import Pipeline, Pipe, Condition
 import logging
 
 class LoggingPipeline(Pipeline):
@@ -198,7 +185,7 @@ class LoggingPipeline(Pipeline):
         """Sanitize and log incoming data"""
         self.logger.info(f"Processing field: {hook.field}")
 
-        original_value = hook.value.get
+        original_value = hook.value
 
         # Auto-strip strings
         if isinstance(original_value, str):
@@ -207,7 +194,7 @@ class LoggingPipeline(Pipeline):
             if original_value != sanitized:
                 self.logger.debug(f"Sanitized '{hook.field}': '{original_value}' -> '{sanitized}'")
 
-            hook.value.set(sanitized)
+            hook.value = sanitized
 
     def _log_validation_result(self, hook):
         """Log validation results with metadata awareness"""
@@ -217,7 +204,7 @@ class LoggingPipeline(Pipeline):
         if metadata.get('redact_in_logs'):
             display_value = "[REDACTED]"
         else:
-            display_value = hook.value.get
+            display_value = hook.value
 
         if not hook.is_valid:
             self.logger.error(f"[X] Validation failed for '{hook.field}'")
@@ -231,12 +218,12 @@ logging.basicConfig(level=logging.DEBUG)
 api_pipeline = LoggingPipeline(
     api_key={
         "type": str,
-        "conditions": {Pipe.Condition.MinLength: 32},
+        "conditions": {Condition.MinLength: 32},
         "metadata": {"redact_in_logs": True}
     },
     username={
         "type": str,
-        "conditions": {Pipe.Condition.MaxLength: 20}
+        "conditions": {Condition.MaxLength: 20}
     }
 )
 
@@ -260,7 +247,7 @@ result = api_pipeline.run(data={
 Combine inheritance with instance customization for maximum flexibility:
 
 ```python
-from pipeline import Pipeline, Pipe
+from pipeline import Pipeline, Pipe, Match
 from datetime import datetime
 
 class AuditPipeline(Pipeline):
@@ -283,7 +270,7 @@ class AuditPipeline(Pipeline):
             "tenant": self.tenant_id,
             "field": hook.field,
             "action": "input",
-            "value": hook.value.get
+            "value": hook.value
         })
 
     def _audit_post(self, hook):
@@ -294,7 +281,7 @@ class AuditPipeline(Pipeline):
             "field": hook.field,
             "action": "validated",
             "is_valid": hook.is_valid,
-            "final_value": hook.value.get
+            "final_value": hook.value
         })
 
     def get_audit_trail(self):
@@ -305,12 +292,12 @@ class AuditPipeline(Pipeline):
 # Create tenant-specific pipelines
 tenant_a_pipeline = AuditPipeline(
     tenant_id="tenant_a",
-    email={"type": str, "matches": {Pipe.Match.Format.Email: None}}
+    email={"type": str, "matches": {Match.Format.Email: None}}
 )
 
 tenant_b_pipeline = AuditPipeline(
     tenant_id="tenant_b",
-    email={"type": str, "matches": {Pipe.Match.Format.Email: None}}
+    email={"type": str, "matches": {Match.Format.Email: None}}
 )
 
 # Process data
@@ -345,22 +332,6 @@ print("Tenant B Audit:", tenant_b_pipeline.get_audit_trail())
     - If instance-level hook is defined (`pipeline.pre_hook` or `pipeline.post_hook`), it runs
     - Otherwise, global class-level hook runs (`Pipeline.global_pre_hook` or `Pipeline.global_post_hook`)
     - Instance hooks **override** global hooks (they don't run together)
-
-!!! note "Modifying Values"
-
-    Always use `hook.value.set()` to modify values in hooks. Use `hook.value.get` to read:
-
-    ```text
-    # [X] Wrong
-    def bad_hook(hook):
-        hook.value = hook.value.strip()
-
-    # [OK] Correct
-    def good_hook(hook):
-        current = hook.value.get
-        if isinstance(current, str):
-            hook.value.set(current.strip())
-    ```
 
 ---
 

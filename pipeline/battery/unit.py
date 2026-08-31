@@ -1,6 +1,6 @@
 from typing import Unpack
 
-from pipeline.core.pipe.resources.types import PipeConfig, PipeUpdateConfig
+from pipeline.pipe.resources.types import PipeConfig, PipeUpdateConfig
 
 
 class BatteryUnit:
