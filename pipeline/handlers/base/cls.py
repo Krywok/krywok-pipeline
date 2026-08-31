@@ -92,10 +92,12 @@ class BaseHandler(ABC, Generic[V, A]):
 
     def __init_subclass__(cls) -> None:
         """
-        Extracts expected runtime types for `value` and `argument` from class generics.
+        Extracts expected runtime types from class generics and sets a unique handler ID.
 
-        The extracted types are recursively unpacked into tuples and stored in `cls._raw_expected_type`,
-        which is later used by `_validate_type_if_possible()` to enforce runtime type safety.
+        During subclass creation, this method:
+        1. Extracts generic type arguments for `value` and `argument` from class definition,
+           recursively unpacking them into tuples stored in `cls._raw_expected_type` for runtime type validation.
+        2. Generates a `snake_case` identifier (`cls.id`) from the class name.
         """
         super().__init_subclass__()
 
@@ -114,6 +116,10 @@ class BaseHandler(ABC, Generic[V, A]):
         cls._raw_expected_type = HandlerExpectedType(
             value=value_type, argument=argument_type
         )
+
+        partial_snake: str = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', cls.__name__)
+
+        cls.id = re.sub('([a-z0-9])([A-Z])', r'\1_\2', partial_snake).lower()
 
     def handle(self) -> Any:
         """
@@ -229,18 +235,6 @@ class BaseHandler(ABC, Generic[V, A]):
         Abstract method to implement the handling logic for ITEM mode.
         """
         ...
-
-    @property
-    def id(self) -> str:
-        """
-        Returns a unique identifier for the handler based on its class name.
-
-        Returns:
-            str: The snake_case identifier of the handler (e.g., 'MaxLength' -> 'max_length').
-        """
-        s1 = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', self.__class__.__name__)
-
-        return re.sub('([a-z0-9])([A-Z])', r'\1_\2', s1).lower()
 
     @cached_property
     def _expected_type(self) -> HandlerExpectedType:
