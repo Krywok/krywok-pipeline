@@ -30,7 +30,7 @@ where = ["."]
 falcon = ["falcon>=4.0.0"]
 docs = [
     "mkdocs==1.6.1",
-    "mkdocstrings[python]==1.0.3",
+    "mkdocstrings[python]==1.0.6",
     "mkdocs-material==9.7.3",
 ]
 i18n = ["krywok-pipeline-plugin-i18n"]

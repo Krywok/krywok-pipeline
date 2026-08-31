@@ -66,13 +66,13 @@ While Conditions check for structural integrity (type and size), the Match stage
 
 The following section is automatically generated from the source code, detailing the available condition handlers and their configurations.
 
-::: pipeline.handlers.match_handler.match
+::: handlers.match.registry
 
-::: pipeline.handlers.match_handler.units.match_encoding
-::: pipeline.handlers.match_handler.units.match_format
-::: pipeline.handlers.match_handler.units.match_localization
-::: pipeline.handlers.match_handler.units.match_network
-::: pipeline.handlers.match_handler.units.match_regex
-::: pipeline.handlers.match_handler.units.match_text
-::: pipeline.handlers.match_handler.units.match_time
-::: pipeline.handlers.match_handler.units.match_web
+::: handlers.match.units.encoding
+::: handlers.match.units.format
+::: handlers.match.units.localization
+::: handlers.match.units.network
+::: handlers.match.units.regex
+::: handlers.match.units.text
+::: handlers.match.units.time
+::: handlers.match.units.web

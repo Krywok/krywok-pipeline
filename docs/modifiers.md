@@ -20,7 +20,7 @@ Use a value from the **pipeline context** as the handler's argument.
 
 The `Item()` modifier transforms a handler to operate on each element of a collection (list or dict) instead of the collection itself.
 
-::: pipeline.handlers.base_handler.handler_modifiers.Item
+::: handlers.base.modifiers.Item
 
     options:
         show_root_heading: true
@@ -215,7 +215,7 @@ print(result.errors)
 
 The `Context()` modifier allows a handler to use a value from the **pipeline context** as its argument, enabling dynamic validation based on other fields.
 
-::: pipeline.handlers.base_handler.handler_modifiers.Context
+::: handlers.base.modifiers.Context
 
     options:
         show_root_heading: true

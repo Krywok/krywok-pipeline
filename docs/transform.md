@@ -167,4 +167,4 @@ print(result.processed_data)
 
 The following section is automatically generated from the source code, detailing transformation handlers like string manipulation, math operations, and unique filtering.
 
-::: pipeline.handlers.transform_handler.transform
+::: handlers.transform.registry

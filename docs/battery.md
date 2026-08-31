@@ -106,6 +106,6 @@ update_order_pipeline = Pipeline(
 
 ## Technical Reference
 
-::: pipeline.battery.unit.BatteryUnit
+::: battery.cls
 
-::: pipeline.battery.battery.Battery
+::: battery.unit
