@@ -105,7 +105,7 @@ class ConditionHandler(BaseHandler[V, A]):
             if self._item_use_key:
                 value = key
 
-            if not self._is_valid_type(value, self._expected_value_type):
+            if not self._is_valid_type(value, self._expected_type.value):
                 continue
 
             # NOTE: We use can cast() here because we checked if the value type is valid but linter does not know that.

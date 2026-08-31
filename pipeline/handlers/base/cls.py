@@ -4,10 +4,11 @@ import re
 from abc import ABC, abstractmethod
 from collections.abc import Callable, Iterable
 from functools import cached_property
+from types import get_original_bases
 from typing import TYPE_CHECKING, Any, ClassVar, Generic, TypeVar, get_args
 
 from pipeline.handlers.base.resources.constants import (
-    Flag, HandlerExpectedTypes, HandlerMode
+    Flag, HandlerExpectedType, HandlerMode
 )
 from pipeline.handlers.base.resources.exceptions import (
     HandlerException, HandlerInvalidArgumentType,
@@ -88,6 +89,31 @@ class BaseHandler(ABC, Generic[V, A]):
         self._preferred_value_type: type | None = _preferred_value_type
 
         self._prepare_and_validate_handler()
+
+    def __init_subclass__(cls) -> None:
+        """
+        Extracts expected runtime types for `value` and `argument` from class generics.
+
+        The extracted types are recursively unpacked into tuples and stored in `cls._raw_expected_type`,
+        which is later used by `_validate_type_if_possible()` to enforce runtime type safety.
+        """
+        super().__init_subclass__()
+
+        def _extract_types(arg: Any, is_top: bool = True) -> Any:
+            args: tuple[Any, ...] = get_args(arg)
+
+            if not args:
+                return (arg, ) if is_top else arg
+
+            return tuple(_extract_types(x, is_top=False) for x in args)
+
+        expected_value_type, expected_argument_type = map(
+            _extract_types, get_args(get_original_bases(cls)[0])
+        )
+
+        cls._raw_expected_type = HandlerExpectedType(
+            value=expected_value_type, argument=expected_argument_type
+        )
 
     def handle(self) -> Any:
         """
@@ -176,7 +202,7 @@ class BaseHandler(ABC, Generic[V, A]):
         This ensures type safety at runtime, verifying that the handler is being applied
         to compatible data.
 
-        Value type is only verified for ROOT and CONTEXT modes.For ITEM mode, the handler
+        Value type is only verified for ROOT and CONTEXT modes. For ITEM mode, the handler
         must implement its own logic.
 
         Raises:
@@ -184,10 +210,10 @@ class BaseHandler(ABC, Generic[V, A]):
             HandlerInvalidArgumentType: If the argument type is invalid.
         """
         if self._mode in (HandlerMode.ROOT, HandlerMode.CONTEXT):
-            if not self._is_valid_type(self.value, self._expected_value_type):
+            if not self._is_valid_type(self.value, self._expected_type.value):
                 raise HandlerInvalidValueType(handler=self)
 
-        if not self._is_valid_type(self.argument, self._expected_argument_type):
+        if not self._is_valid_type(self.argument, self._expected_type.argument):
             raise HandlerInvalidArgumentType(handler=self)
 
     @abstractmethod
@@ -217,79 +243,27 @@ class BaseHandler(ABC, Generic[V, A]):
         return re.sub('([a-z0-9])([A-Z])', r'\1_\2', s1).lower()
 
     @cached_property
-    def _expected_types(self) -> HandlerExpectedTypes:
+    def _expected_type(self) -> HandlerExpectedType:
         """
-        Determines the expected value and argument types from the generic type arguments.
+        Resolves the final target runtime types for validating `self.value` and `self.argument`.
 
-        This introspects the class definition to find the concrete types provided for
-        `BaseHandler[V, A]`.
+        Returns the default `_raw_expected_type` parsed during subclass creation. If an instance-level
+        `_preferred_value_type` was provided, it verifies compatibility against the allowed generic
+        types and narrows down the expected `value` type to the preferred one.
 
         Returns:
-            HandlerExpectedTypes: Named tuple containing expected value and argument types.
+            HandlerExpectedType: Container holding the expected type tuple(s) for `value` and `argument`.
 
         Raises:
-            TypeError: If the class does not inherit from BaseHandler correctly or has incorrect generic arguments.
-            HandlerInvalidPreferredValueType: If the preferred value type is invalid.
+            HandlerInvalidPreferredValueType: If `_preferred_value_type` is not compatible with the handler.
         """
-        orig_bases: list[Any] = getattr(self, "__orig_bases__", [])
+        if not self._preferred_value_type:
+            return self._raw_expected_type
 
-        if len(orig_bases) != 1:
-            raise TypeError(
-                "Handler subclass must inherit from a generic base class (e.g. BaseHandler[V, A])."
-            )
+        if self._preferred_value_type not in self._raw_expected_type.value and Any not in self._raw_expected_type.value:
+            raise HandlerInvalidPreferredValueType(self)
 
-        generic_args: tuple[Any, ...] = get_args(orig_bases[0])
-
-        if len(generic_args) != 2:
-            raise TypeError(
-                f"Expected 2 generic arguments on base class, found {len(generic_args)}."
-            )
-
-        def _unpack_generic_args(arg: Any) -> Any:
-            generic_args = get_args(arg)
-
-            if generic_args:
-                return tuple(
-                    _unpack_generic_args(sub_arg) for sub_arg in generic_args
-                )
-
-            return arg
-
-        expected_value_type: tuple[type, ...] | type = _unpack_generic_args(
-            generic_args[0]
+        return HandlerExpectedType(
+            value=(self._preferred_value_type, ),
+            argument=self._raw_expected_type.argument
         )
-
-        expected_argument_type: tuple[type, ...] | type = _unpack_generic_args(
-            generic_args[1]
-        )
-
-        if not isinstance(expected_value_type, tuple):
-            expected_value_types = (expected_value_type, )
-        else:
-            expected_value_types = expected_value_type
-
-        if not isinstance(expected_argument_type, tuple):
-            expected_argument_type = (expected_argument_type, )
-
-        if self._preferred_value_type:
-            if self._preferred_value_type not in expected_value_types and Any not in expected_value_types:
-                raise HandlerInvalidPreferredValueType(
-                    self, expected_value_type=expected_value_types
-                )
-
-            return HandlerExpectedTypes(
-                value=(self._preferred_value_type, ),
-                argument=expected_argument_type
-            )
-
-        return HandlerExpectedTypes(
-            value=expected_value_types, argument=expected_argument_type
-        )
-
-    @property
-    def _expected_value_type(self) -> tuple[type, ...]:
-        return self._expected_types.value
-
-    @property
-    def _expected_argument_type(self) -> tuple[type, ...]:
-        return self._expected_types.argument

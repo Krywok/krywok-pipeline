@@ -12,6 +12,6 @@ class HandlerMode(Enum):
     ITEM = "ITEM"
 
 
-class HandlerExpectedTypes(NamedTuple):
+class HandlerExpectedType(NamedTuple):
     value: tuple[type, ...]
     argument: tuple[type, ...]

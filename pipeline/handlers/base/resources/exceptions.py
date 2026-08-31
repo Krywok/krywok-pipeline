@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from pipeline.handlers.base.resources.constants import HandlerMode
 
@@ -9,20 +9,22 @@ if TYPE_CHECKING:
 
 
 class HandlerException(Exception):
-    pass
+    @staticmethod
+    def _format_expected_type(expected_type: Any, /) -> str:
+        if isinstance(expected_type, (tuple, list)):
+            return ", ".join(
+                HandlerException._format_expected_type(x) for x in expected_type
+            )
+
+        return getattr(expected_type, "__name__", str(expected_type))
 
 
 class HandlerInvalidValueType(HandlerException):
     def __init__(self, handler: BaseHandler) -> None:
-        expected_types = handler._expected_value_type
-        received_type = type(handler.value)
-
-        expected_str = ", ".join([t.__name__ for t in expected_types])
-
         error: str = (
-            f"Value type mismatch in handler '{handler.id}'. "
-            f"Expected type(s): {expected_str}. "
-            f"Received type: {received_type.__name__}. "
+            f"Value type mismatch in handler {handler.__class__}. "
+            f"Expected type(s): {self._format_expected_type(handler._expected_type.value)}. "
+            f"Received type: {type(handler.value).__name__}. "
             f"Value: {repr(handler.value)}."
         )
 
@@ -30,22 +32,14 @@ class HandlerInvalidValueType(HandlerException):
 
 
 class HandlerInvalidPreferredValueType(HandlerException):
-    def __init__(
-        self, handler: BaseHandler, expected_value_type: tuple[type, ...]
-    ) -> None:
-        received_type = handler._preferred_value_type
-
-        if received_type:
-            received_type_str = received_type.__name__
-        else:
-            received_type_str = "None"
-
-        expected_str = ", ".join([t.__name__ for t in expected_value_type])
+    def __init__(self, handler: BaseHandler) -> None:
+        if not handler._preferred_value_type:
+            raise HandlerException("No preferred value type.")
 
         error: str = (
-            f"Preferred value type mismatch in handler '{handler.id}'. "
-            f"Expected type(s): {expected_str}. "
-            f"Received type: {received_type_str}. "
+            f"Preferred value type mismatch in handler {handler.__class__}. "
+            f"Expected type(s): {self._format_expected_type(handler._raw_expected_type.value)}. "
+            f"Received type: {handler._preferred_value_type.__name__}. "
         )
 
         super().__init__(error)
@@ -53,15 +47,10 @@ class HandlerInvalidPreferredValueType(HandlerException):
 
 class HandlerInvalidArgumentType(HandlerException):
     def __init__(self, handler: BaseHandler) -> None:
-        expected_types = handler._expected_argument_type
-        received_type = type(handler.argument)
-
-        expected_str = ", ".join([t.__name__ for t in expected_types])
-
         error: str = (
-            f"Argument type mismatch in handler '{handler.__class__}'. "
-            f"Expected type(s): {expected_str}. "
-            f"Received type: {received_type.__name__}. "
+            f"Argument type mismatch in handler {handler.__class__}. "
+            f"Expected type(s): {self._format_expected_type(handler._expected_type.argument)}. "
+            f"Received type: {type(handler.argument).__name__}. "
             f"Value: {repr(handler.value)}. "
             f"Argument: {repr(handler.argument)}."
         )
@@ -75,13 +64,13 @@ class HandlerModeException(HandlerException):
 
 class HandlerModeUnsupported(HandlerModeException):
     def __init__(self, handler_mode: HandlerMode) -> None:
-        error: str = f"This condition does not support \"{handler_mode.value}\" mode."
+        error: str = f"This handler does not support \"{handler_mode.value}\" mode."
 
         super().__init__(error)
 
 
 class HandlerModeMissingContextValue(HandlerModeException):
     def __init__(self, argument: str) -> None:
-        error: str = f"Condition mode is context, but there is missing context value for specifed context key \"{argument}\"."
+        error: str = f"Hnadler mode is context, but there is missing context value for specifed context key \"{argument}\"."
 
         super().__init__(error)
