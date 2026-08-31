@@ -74,10 +74,10 @@ def process_request(
             email={
                 "type": str,
                 "conditions": {
-                    Pipe.Condition.MaxLength: 64
+                    Condition.MaxLength: 64
                 },
                 "matches": {
-                    Pipe.Match.Format.Email: None
+                    Match.Format.Email: None
                 }
             }
         )
