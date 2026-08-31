@@ -20,7 +20,7 @@ Use a value from the **pipeline context** as the handler's argument.
 
 The `Item()` modifier transforms a handler to operate on each element of a collection (list or dict) instead of the collection itself.
 
-::: pipeline.handlers.base_handler.handler_modifiers.Item
+::: handlers.base.modifiers.Item
 
     options:
         show_root_heading: true
@@ -31,15 +31,14 @@ The `Item()` modifier transforms a handler to operate on each element of a colle
 ### Example 1: Validate All Items in a List
 
 ```python
-from pipeline import Pipe
-from pipeline.handlers import Item
+from pipeline import Pipe, Item, Match
 
 # Validate that all emails in a list are valid
 result = Pipe(
     value=["john@example.com", "jane@example.com", "admin@company.org"],
     type=list,
     matches={
-        Item(Pipe.Match.Format.Email): None
+        Item(Match.Format.Email): None
     }
 ).run()
 
@@ -51,7 +50,7 @@ result = Pipe(
     value=["john@example.com", "invalid-email", "admin@company.org"],
     type=list,
     matches={
-        Item(Pipe.Match.Format.Email): None
+        Item(Match.Format.Email): None
     }
 ).run()
 
@@ -64,15 +63,14 @@ print(result.match_errors)
 ### Example 2: Transform All Items
 
 ```python
-from pipeline import Pipe
-from pipeline.handlers import Item
+from pipeline import Pipe, Item, Transform
 
 # Capitalize all strings in a list
 result = Pipe(
     value=["hello", "world", "python"],
     type=list,
     transform={
-        Item(Pipe.Transform.Capitalize): None
+        Item(Transform.Capitalize): None
     }
 ).run()
 
@@ -87,8 +85,7 @@ print(result.value)
 The `use_key` parameter allows you to validate or transform **dictionary keys** instead of values.
 
 ```python
-from pipeline import Pipe
-from pipeline.handlers import Item
+from pipeline import Pipe, Item, Match
 
 # Validate that all dictionary keys match a pattern
 data = {
@@ -102,7 +99,7 @@ result = Pipe(
     type=dict,
     matches={
         # Validate that all keys start with "user_"
-        Item(Pipe.Match.Regex.Search, use_key=True): r"^user_"
+        Item(Match.Regex.Search, use_key=True): r"^user_"
     }
 ).run()
 
@@ -120,7 +117,7 @@ result = Pipe(
     value=data_invalid,
     type=dict,
     matches={
-        Item(Pipe.Match.Regex.Search, use_key=True): r"^user_"
+        Item(Match.Regex.Search, use_key=True): r"^user_"
     }
 ).run()
 
@@ -148,15 +145,14 @@ print(result.match_errors)
 The `only_consider` parameter allows you to apply a handler **only to items of a specific type**.
 
 ```python
-from pipeline import Pipe
-from pipeline.handlers import Item
+from pipeline import Pipe, Item, Transform
 
 # Mixed-type list: only capitalize strings
 result = Pipe(
     value=["hello", 123, "world", 456, "python"],
     type=list,
     transform={
-        Item(Pipe.Transform.Multiply, only_consider=int): 10
+        Item(Transform.Multiply, only_consider=int): 10
     }
 ).run()
 
@@ -174,20 +170,19 @@ print(result.value)
 ### Example 5: Complex Validation with Item()
 
 ```python
-from pipeline import Pipeline, Pipe
-from pipeline.handlers import Item
+from pipeline import Pipeline, Pipe, Item, Condition, Match
 
 # Validate a list of user objects
 user_list_pipeline = Pipeline(
     users={
         "type": list,
         "conditions": {
-            Pipe.Condition.MinLength: 1,
-            Pipe.Condition.MaxLength: 100
+            Condition.MinLength: 1,
+            Condition.MaxLength: 100
         },
         "matches": {
             # Each item must be a valid email
-            Item(Pipe.Match.Format.Email): None
+            Item(Match.Format.Email): None
         }
     }
 )
@@ -220,7 +215,7 @@ print(result.errors)
 
 The `Context()` modifier allows a handler to use a value from the **pipeline context** as its argument, enabling dynamic validation based on other fields.
 
-::: pipeline.handlers.base_handler.handler_modifiers.Context
+::: handlers.base.modifiers.Context
 
     options:
         show_root_heading: true
@@ -233,22 +228,21 @@ The `Context()` modifier allows a handler to use a value from the **pipeline con
 Validate that a password confirmation field matches the original password:
 
 ```python
-from pipeline import Pipeline, Pipe
-from pipeline.handlers import Context
+from pipeline import Pipeline, Pipe, Context, Condition, Match
 
 # Create a registration pipeline
 registration_pipeline = Pipeline(
     password={
         "type": str,
         "matches": {
-            Pipe.Match.Format.Password: Pipe.Match.Format.Password.STRICT
+            Match.Format.Password: Match.Format.Password.STRICT
         }
     },
     password_confirm={
         "type": str,
         "conditions": {
             # Use the 'password' field from context as the comparison value
-            Context(Pipe.Condition.MatchesField): "password"
+            Context(Condition.MatchesField): "password"
         }
     }
 )
@@ -279,26 +273,25 @@ print(result.errors)
 Validate that a value is within a range defined by other fields:
 
 ```python
-from pipeline import Pipeline, Pipe
-from pipeline.handlers import Context
+from pipeline import Pipeline, Pipe, Context, Condition
 
 # Product pricing pipeline
 pricing_pipeline = Pipeline(
     min_price={
         "type": int,
-        "conditions": {Pipe.Condition.MinNumber: 0}
+        "conditions": {Condition.MinNumber: 0}
     },
     max_price={
         "type": int,
-        "conditions": {Pipe.Condition.MinNumber: 0}
+        "conditions": {Condition.MinNumber: 0}
     },
     current_price={
         "type": int,
         "conditions": {
             # Use min_price from context
-            Context(Pipe.Condition.MinNumber): "min_price",
+            Context(Condition.MinNumber): "min_price",
             # Use max_price from context
-            Context(Pipe.Condition.MaxNumber): "max_price"
+            Context(Condition.MaxNumber): "max_price"
         }
     }
 )
@@ -329,26 +322,25 @@ print(result.errors)
 ## Advanced Example: Nested Validation
 
 ```python
-from pipeline import Pipeline, Pipe
-from pipeline.handlers import Item
+from pipeline import Pipeline, Pipe, Item, Condition, Match, Transform
 
 # Validate a complex nested structure
 team_pipeline = Pipeline(
     team_name={
         "type": str,
-        "conditions": {Pipe.Condition.MaxLength: 50}
+        "conditions": {Condition.MaxLength: 50}
     },
     members={
         "type": list,
         "conditions": {
-            Pipe.Condition.MinLength: 1,
-            Pipe.Condition.MaxLength: 10,
+            Condition.MinLength: 1,
+            Condition.MaxLength: 10,
             # Each member must be a valid email
-            Item(Pipe.Match.Format.Email): None
+            Item(Match.Format.Email): None
         },
         "transform": {
             # Lowercase all emails
-            Item(Pipe.Transform.Lowercase): None
+            Item(Transform.Lowercase): None
         }
     }
 )
@@ -404,6 +396,6 @@ print(result.processed_data)
 
 ## Next Steps
 
--   Learn about [Pipeline Hooks](hooks.md) for pre/post processing
--   Explore [Error Customization](customization.md) for custom error messages
--   Check [Examples](examples.md) for more real-world use cases
+- Learn about [Pipeline Hooks](hooks.md) for pre/post processing
+- Explore [Error Customization](customization.md) for custom error messages
+- Check [Examples](examples.md) for more real-world use cases

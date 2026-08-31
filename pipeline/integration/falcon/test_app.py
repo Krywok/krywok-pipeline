@@ -1,6 +1,8 @@
 from falcon.asgi import App, Request, Response
 
-from pipeline.core.pipe.pipe import Pipe
+from pipeline.handlers.condition.registry import Condition
+from pipeline.handlers.match.registry import Match
+from pipeline.handlers.transform.registry import Transform
 from pipeline.integration.falcon.decorator import process_request
 
 app = App()
@@ -13,10 +15,10 @@ class Resource:
         email={
             "type": str,
             "conditions": {
-                Pipe.Condition.MaxLength: 64
+                Condition.MaxLength: 64
             },
             "matches": {
-                Pipe.Match.Format.Email: None
+                Match.Format.Email: None
             }
         }
     )
@@ -28,7 +30,7 @@ class Resource:
         second={
             "type": int,
             "transform": {
-                Pipe.Transform.Multiply: 100
+                Transform.Multiply: 100
             }
         }
     )

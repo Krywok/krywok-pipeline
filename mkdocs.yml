@@ -64,7 +64,7 @@ plugins:
           default_handler: python
           handlers:
               python:
-                  paths: [.]
+                  paths: [pipeline]
                   options:
                       docstring_style: google
                       show_root_heading: false

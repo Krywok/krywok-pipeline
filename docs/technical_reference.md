@@ -1,73 +1,73 @@
-::: pipeline.core.pipe.pipe
+<!-- ::: pipe.cls
 
     options:
         show_root_heading: true
 
-::: pipeline.core.pipeline.pipeline
+::: pipeline.cls
+
+    options:
+        show_root_heading: true -->
+
+::: handlers.base.cls
 
     options:
         show_root_heading: true
 
-::: pipeline.handlers.base_handler.base_handler
+::: handlers.base.modifiers
 
     options:
         show_root_heading: true
 
-::: pipeline.handlers.base_handler.handler_modifiers
+::: handlers.condition.cls
 
     options:
         show_root_heading: true
 
-::: pipeline.handlers.condition_handler.condition_handler
+::: handlers.condition.registry
 
     options:
         show_root_heading: true
 
-::: pipeline.handlers.condition_handler.condition
+::: handlers.match.cls
 
     options:
         show_root_heading: true
 
-::: pipeline.handlers.match_handler.match_handler
+::: handlers.match.registry
 
     options:
         show_root_heading: true
 
-::: pipeline.handlers.match_handler.match
+::: handlers.match.units.encoding
+::: handlers.match.units.format
+::: handlers.match.units.localization
+::: handlers.match.units.network
+::: handlers.match.units.regex
+::: handlers.match.units.text
+::: handlers.match.units.time
+::: handlers.match.units.web
+
+::: handlers.transform.cls
 
     options:
         show_root_heading: true
 
-::: pipeline.handlers.match_handler.units.match_encoding
-::: pipeline.handlers.match_handler.units.match_format
-::: pipeline.handlers.match_handler.units.match_localization
-::: pipeline.handlers.match_handler.units.match_network
-::: pipeline.handlers.match_handler.units.match_regex
-::: pipeline.handlers.match_handler.units.match_text
-::: pipeline.handlers.match_handler.units.match_time
-::: pipeline.handlers.match_handler.units.match_web
-
-::: pipeline.handlers.transform_handler.transform_handler
+::: handlers.transform.registry
 
     options:
         show_root_heading: true
 
-::: pipeline.handlers.transform_handler.transform
+::: integration.falcon.decorator
 
     options:
         show_root_heading: true
 
-::: pipeline.integration.falcon.decorator
+::: battery.cls
 
     options:
         show_root_heading: true
 
-::: pipeline.battery.unit.BatteryUnit
-
-    options:
-        show_root_heading: true
-
-::: pipeline.battery.battery.Battery
+::: battery.unit
 
     options:
         show_root_heading: true

@@ -12,4 +12,4 @@ The **Condition** stage is the second step in the `Pipe` lifecycle (after option
 
 The following section is automatically generated from the source code, detailing the available condition handlers and their configurations.
 
-::: pipeline.handlers.condition_handler.condition
+::: handlers.condition.registry
