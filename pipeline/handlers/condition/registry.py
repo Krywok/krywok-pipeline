@@ -4,10 +4,9 @@ from collections.abc import Iterable
 from typing import Any
 
 from pipeline.handlers.base.resources.constants import HandlerMode
+from pipeline.handlers.condition.cls import ConditionHandler
 from pipeline.handlers.condition.resources.constants import ConditionFlag
 from pipeline.pipeline.cls import Pipeline
-
-from ...handler.condition.cls import ConditionHandler
 
 
 class Condition:
