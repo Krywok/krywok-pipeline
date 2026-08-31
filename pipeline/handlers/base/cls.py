@@ -107,12 +107,12 @@ class BaseHandler(ABC, Generic[V, A]):
 
             return tuple(_extract_types(x, is_top=False) for x in args)
 
-        expected_value_type, expected_argument_type = map(
+        value_type, argument_type = map(
             _extract_types, get_args(get_original_bases(cls)[0])
         )
 
         cls._raw_expected_type = HandlerExpectedType(
-            value=expected_value_type, argument=expected_argument_type
+            value=value_type, argument=argument_type
         )
 
     def handle(self) -> Any:
