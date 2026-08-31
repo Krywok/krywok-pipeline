@@ -1,6 +1,6 @@
+from collections.abc import Callable
 from functools import wraps
 from typing import Any, ClassVar, ParamSpec, TypeVar
-from collections.abc import Callable
 
 from pipeline.core.pipe.resources.types import PipeConfig, PipeContext
 from pipeline.core.pipeline.resources.constants import (

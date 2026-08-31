@@ -1,6 +1,6 @@
 import re
-from typing import Any, Optional
 from collections.abc import Callable
+from typing import Any
 
 from pipeline.handlers.base_handler.resources.constants import HandlerMode
 from pipeline.handlers.transform_handler.cls import TransformHandler
@@ -13,7 +13,7 @@ class Transform:
     Transform handlers modify the value in some way, such as changing case,
     replacing substrings, or performing arithmetic operations.
     """
-    class Strip(TransformHandler[str, Optional[str]]):
+    class Strip(TransformHandler[str, str | None]):
         """Removes leading and trailing whitespace from a string"""
         SUPPORT = (HandlerMode.ROOT, HandlerMode.ITEM)
 
