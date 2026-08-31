@@ -1,8 +1,10 @@
 from typing import Literal, Unpack
 
-from pipeline import Condition, Match, Transform
 from pipeline.battery.unit import BatteryUnit
-from pipeline.core.pipe.resources.types import PipeConfig
+from pipeline.handler.condition.registry import Condition
+from pipeline.handler.match.registry import Match
+from pipeline.handler.transform.registry import Transform
+from pipeline.pipe.resources.types import PipeConfig
 
 
 class Battery:
