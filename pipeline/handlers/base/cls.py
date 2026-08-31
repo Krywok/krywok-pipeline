@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import re
 from abc import ABC, abstractmethod
-from collections.abc import Callable, Iterable
+from collections.abc import Callable
 from functools import cached_property
 from types import get_original_bases
 from typing import TYPE_CHECKING, Any, ClassVar, Generic, TypeVar, get_args
@@ -181,25 +181,22 @@ class BaseHandler(ABC, Generic[V, A]):
                 ) if self.CONTEXT_ARGUMENT_BUILDER else context_value
 
     def _is_valid_type(
-        self, value: Any, expected_type: type | tuple[type, ...]
+        self, value: Any, expected_type: tuple[type, ...]
     ) -> bool:
         """
         Checks if a value matches the expected type(s).
 
         Args:
             value (Any): The value to check.
-            expected_type (type | tuple[type, ...]): The expected type or tuple of types.
+            expected_type (tuple[type, ...]): The expected type.
 
         Returns:
             bool: True if the value matches the expected type, False otherwise.
         """
-        if isinstance(expected_type, Iterable):
-            if Any in expected_type:
-                return True
+        if Any in expected_type:
+            return True
 
-            return isinstance(value, expected_type)
-
-        return expected_type == Any or isinstance(value, expected_type)
+        return isinstance(value, expected_type)
 
     def _validate_type_if_possible(self) -> None:
         """
