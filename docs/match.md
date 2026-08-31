@@ -19,8 +19,8 @@ While Conditions check for structural integrity (type and size), the Match stage
     ```python
     email={
         "type": str,
-        "conditions": {Pipe.Condition.MaxLength: 64},  # Structure
-        "matches": {Pipe.Match.Format.Email: None}      # Content
+        "conditions": {Condition.MaxLength: 64},  # Structure
+        "matches": {Match.Format.Email: None}      # Content
     }
     ```
 
@@ -51,8 +51,8 @@ While Conditions check for structural integrity (type and size), the Match stage
     ```python
     email={
         "type": str,
-        "conditions": {Pipe.Condition.MaxLength: 64},  # Structure
-        "matches": {Pipe.Match.Format.Email: None}      # Content
+        "conditions": {Condition.MaxLength: 64},  # Structure
+        "matches": {Match.Format.Email: None}      # Content
     }
     ```
 

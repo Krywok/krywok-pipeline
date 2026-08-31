@@ -11,7 +11,7 @@ Condition handlers validate data integrity. They must implement the `query()` me
 ### Basic Structure
 
 ```python
-from pipeline.handlers import HandlerMode, ConditionHandler
+from pipeline import HandlerMode, ConditionHandler
 
 class MyCustomCondition(ConditionHandler[ValueType, ArgumentType]):
     """Your custom condition handler"""
@@ -39,8 +39,7 @@ class MyCustomCondition(ConditionHandler[ValueType, ArgumentType]):
 ### Example 1: Custom Age Validator
 
 ```python
-from pipeline.handlers import HandlerMode, ConditionHandler
-from pipeline import Pipe
+from pipeline import Pipe, HandlerMode, Condition, ConditionHandler
 
 class IsAdult(ConditionHandler[int, None]):
     """Validates that age is 18 or older"""
@@ -55,13 +54,13 @@ class IsAdult(ConditionHandler[int, None]):
         return self.value >= 18
 
 # Register it with Pipe
-Pipe.Condition.IsAdult = IsAdult
+Condition.IsAdult = IsAdult
 
 # Use it
 result = Pipe(
     value=16,
     type=int,
-    conditions={Pipe.Condition.IsAdult: None}
+    conditions={Condition.IsAdult: None}
 ).run()
 
 print(result.condition_errors)
@@ -71,8 +70,7 @@ print(result.condition_errors)
 ### Example 2: Custom Business Rule
 
 ```python
-from pipeline.handlers import HandlerMode, ConditionHandler
-from pipeline import Pipe
+from pipeline import Pipe, HandlerMode, Condition, ConditionHandler
 
 class IsValidCouponCode(ConditionHandler[str, list]):
     """Validates coupon code against a list of valid codes"""
@@ -89,14 +87,14 @@ class IsValidCouponCode(ConditionHandler[str, list]):
         return self.value.upper() in [code.upper() for code in self.argument]
 
 # Register and use
-Pipe.Condition.IsValidCouponCode = IsValidCouponCode
+Condition.IsValidCouponCode = IsValidCouponCode
 
 valid_codes = ["SUMMER2024", "WELCOME10", "FREESHIP"]
 
 result = Pipe(
     value="INVALID",
     type=str,
-    conditions={Pipe.Condition.IsValidCouponCode: valid_codes}
+    conditions={Condition.IsValidCouponCode: valid_codes}
 ).run()
 
 print(result.condition_errors)
@@ -106,9 +104,7 @@ print(result.condition_errors)
 ### Example 3: Context-Aware Validation
 
 ```python
-from pipeline.handlers import HandlerMode, ConditionHandler
-from pipeline import Pipeline, Pipe
-from pipeline.handlers import Context
+from pipeline import Pipeline, Pipe, Context, HandlerMode, Condition, ConditionHandler
 
 class IsGreaterThanField(ConditionHandler[int | float, int | float]):
     """Validates that value is greater than another field in context"""
@@ -123,7 +119,7 @@ class IsGreaterThanField(ConditionHandler[int | float, int | float]):
         return self.value > self.argument
 
 # Register
-Pipe.Condition.IsGreaterThanField = IsGreaterThanField
+Condition.IsGreaterThanField = IsGreaterThanField
 
 # Use in pipeline
 pipeline = Pipeline(
@@ -131,7 +127,7 @@ pipeline = Pipeline(
     max_price={
         "type": int,
         "conditions": {
-            Context(Pipe.Condition.IsGreaterThanField): "min_price"
+            Context(Condition.IsGreaterThanField): "min_price"
         }
     }
 )
@@ -160,7 +156,7 @@ Transform handlers modify values. They must implement the `operation()` method t
 ### Basic Structure
 
 ```python
-from pipeline.handlers import HandlerMode, TransformHandler
+from pipeline import HandlerMode, TransformHandler
 
 class MyCustomTransform(TransformHandler[ValueType, ArgumentType]):
     """Your custom transform handler"""
@@ -182,8 +178,7 @@ class MyCustomTransform(TransformHandler[ValueType, ArgumentType]):
 ### Example 1: Custom String Sanitizer
 
 ```python
-from pipeline.handlers import HandlerMode, TransformHandler
-from pipeline import Pipe
+from pipeline import Pipe, HandlerMode, TransformHandler, Transform
 import re
 
 class RemoveSpecialChars(TransformHandler[str, None]):
@@ -195,13 +190,13 @@ class RemoveSpecialChars(TransformHandler[str, None]):
         return re.sub(r'[^a-zA-Z0-9\s]', '', self.value)
 
 # Register
-Pipe.Transform.RemoveSpecialChars = RemoveSpecialChars
+Transform.RemoveSpecialChars = RemoveSpecialChars
 
 # Use
 result = Pipe(
     value="Hello! @World# 2024$",
     type=str,
-    transform={Pipe.Transform.RemoveSpecialChars: None}
+    transform={Transform.RemoveSpecialChars: None}
 ).run()
 
 print(result.value)  # "Hello World 2024"
@@ -210,8 +205,7 @@ print(result.value)  # "Hello World 2024"
 ### Example 2: Custom Price Formatter
 
 ```python
-from pipeline.handlers import HandlerMode, TransformHandler
-from pipeline import Pipe
+from pipeline import Pipe, HandlerMode, TransformHandler, Transform
 
 class RoundToDecimalPlaces(TransformHandler[float, int]):
     """Rounds a float to specified decimal places"""
@@ -223,13 +217,13 @@ class RoundToDecimalPlaces(TransformHandler[float, int]):
         return round(self.value, self.argument)
 
 # Register
-Pipe.Transform.RoundToDecimalPlaces = RoundToDecimalPlaces
+Transform.RoundToDecimalPlaces = RoundToDecimalPlaces
 
 # Use
 result = Pipe(
     value=19.99567,
     type=float,
-    transform={Pipe.Transform.RoundToDecimalPlaces: 2}
+    transform={Transform.RoundToDecimalPlaces: 2}
 ).run()
 
 print(result.value)  # 20.0
@@ -238,8 +232,7 @@ print(result.value)  # 20.0
 ### Example 3: Custom List Transformer
 
 ```python
-from pipeline.handlers import HandlerMode, TransformHandler
-from pipeline import Pipe
+from pipeline import Pipe, HandlerMode, TransformHandler, Transform
 
 class SortList(TransformHandler[list, bool]):
     """Sorts a list. Argument: True for ascending, False for descending"""
@@ -250,13 +243,13 @@ class SortList(TransformHandler[list, bool]):
         return sorted(self.value, reverse=not self.argument)
 
 # Register
-Pipe.Transform.SortList = SortList
+Transform.SortList = SortList
 
 # Use
 result = Pipe(
     value=[5, 2, 8, 1, 9],
     type=list,
-    transform={Pipe.Transform.SortList: True}  # Ascending
+    transform={Transform.SortList: True}  # Ascending
 ).run()
 
 print(result.value)  # [1, 2, 5, 8, 9]
@@ -265,8 +258,7 @@ print(result.value)  # [1, 2, 5, 8, 9]
 ### Example 4: Custom Data Masking
 
 ```python
-from pipeline.handlers import HandlerMode, TransformHandler
-from pipeline import Pipe
+from pipeline import Pipe, HandlerMode, TransformHandler, Transform
 
 class MaskCreditCard(TransformHandler[str, None]):
     """Masks credit card number, showing only last 4 digits"""
@@ -283,13 +275,13 @@ class MaskCreditCard(TransformHandler[str, None]):
         return clean
 
 # Register
-Pipe.Transform.MaskCreditCard = MaskCreditCard
+Transform.MaskCreditCard = MaskCreditCard
 
 # Use
 result = Pipe(
     value="1234-5678-9012-3456",
     type=str,
-    transform={Pipe.Transform.MaskCreditCard: None}
+    transform={Transform.MaskCreditCard: None}
 ).run()
 
 print(result.value)  # "************3456"
@@ -352,15 +344,15 @@ After creating your custom handler, register it with `Pipe`:
 
 ```python
 # For conditions
-Pipe.Condition.MyCustomCondition = MyCustomCondition
+Condition.MyCustomCondition = MyCustomCondition
 
 # For matches
-Pipe.Match.Format.MyCustomMatch = MyCustomMatch
+Match.Format.MyCustomMatch = MyCustomMatch
 # or
-Pipe.Match.Text.MyCustomMatch = MyCustomMatch
+Match.Text.MyCustomMatch = MyCustomMatch
 
 # For transforms
-Pipe.Transform.MyCustomTransform = MyCustomTransform
+Transform.MyCustomTransform = MyCustomTransform
 ```
 
 Then use it like any built-in handler:
@@ -369,9 +361,9 @@ Then use it like any built-in handler:
 result = Pipe(
     value="test",
     type=str,
-    conditions={Pipe.Condition.MyCustomCondition: argument},
-    matches={Pipe.Match.Format.MyCustomMatch: argument},
-    transform={Pipe.Transform.MyCustomTransform: argument}
+    conditions={Condition.MyCustomCondition: argument},
+    matches={Match.Format.MyCustomMatch: argument},
+    transform={Transform.MyCustomTransform: argument}
 ).run()
 ```
 

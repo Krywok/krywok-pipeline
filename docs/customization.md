@@ -21,7 +21,7 @@ Condition and match handlers have an `ERROR_TEMPLATES` class variable that defin
 ## Basic Error Template Structure
 
 ```python
-from pipeline.handlers import HandlerMode, ConditionHandler
+from pipeline import HandlerMode, ConditionHandler
 
 class Condition(ConditionHandler):
     ERROR_TEMPLATES = {
@@ -40,17 +40,16 @@ The lambda function receives `self` (the handler instance) and returns a error m
 Directly override the `ERROR_TEMPLATES` dictionary for a specific handler:
 
 ```python
-from pipeline import Pipe
-from pipeline.handlers import HandlerMode
+from pipeline import Pipe, HandlerMode, Match
 
 # Customize the Email validator error message
-Pipe.Match.Format.Email.ERROR_TEMPLATES[HandlerMode.ROOT] = lambda _: "Please provide a valid email address."
+Match.Format.Email.ERROR_TEMPLATES[HandlerMode.ROOT] = lambda _: "Please provide a valid email address."
 
 # Now use it
 result = Pipe(
     value="invalid-email",
     type=str,
-    matches={Pipe.Match.Format.Email: None}
+    matches={Match.Format.Email: None}
 ).run()
 
 print(result.match_errors)
@@ -64,18 +63,17 @@ print(result.match_errors)
 Use handler properties to create dynamic error messages:
 
 ```python
-from pipeline import Pipe
-from pipeline.handlers import HandlerMode
+from pipeline import Pipe, HandlerMode, Condition
 
 # Customize MinLength to show the expected length
-Pipe.Condition.MinLength.ERROR_TEMPLATES[HandlerMode.ROOT] = lambda self: (
+Condition.MinLength.ERROR_TEMPLATES[HandlerMode.ROOT] = lambda self: (
     f"Value must be at least {self.argument} characters long."
 )
 
 result = Pipe(
     value="Hi",
     type=str,
-    conditions={Pipe.Condition.MinLength: 10}
+    conditions={Condition.MinLength: 10}
 ).run()
 
 print(result.condition_errors)
@@ -89,18 +87,17 @@ print(result.condition_errors)
 Customize error messages for different handler modes:
 
 ```python
-from pipeline import Pipe
-from pipeline.handlers import HandlerMode, Item
+from pipeline import Pipe, HandlerMode, Item, Match
 
 # Customize for both ROOT and ITEM modes
-Pipe.Match.Format.Email.ERROR_TEMPLATES[HandlerMode.ROOT] = lambda _: "Invalid email address."
-Pipe.Match.Format.Email.ERROR_TEMPLATES[HandlerMode.ITEM] = lambda self: f"Invalid email at position {self._item_index}."
+Match.Format.Email.ERROR_TEMPLATES[HandlerMode.ROOT] = lambda _: "Invalid email address."
+Match.Format.Email.ERROR_TEMPLATES[HandlerMode.ITEM] = lambda self: f"Invalid email at position {self._item_index}."
 
 # ROOT mode
 result = Pipe(
     value="invalid",
     type=str,
-    matches={Pipe.Match.Format.Email: None}
+    matches={Match.Format.Email: None}
 ).run()
 
 print(result.match_errors[0]['msg'])
@@ -110,7 +107,7 @@ print(result.match_errors[0]['msg'])
 result = Pipe(
     value=["valid@email.com", "invalid", "another@email.com"],
     type=list,
-    matches={Item(Pipe.Match.Format.Email): None}
+    matches={Item(Match.Format.Email): None}
 ).run()
 
 print(result.match_errors[0][1]['msg'])
@@ -125,8 +122,7 @@ print(result.match_errors[0][1]['msg'])
 
 ```python
 from contextvars import ContextVar
-from pipeline import Pipe
-from pipeline.handlers import ConditionHandler, HandlerMode, ConditionFlag
+from pipeline import Pipe, ConditionHandler, HandlerMode, Condition, ConditionFlag
 
 locale = ContextVar("locale", default="en")
 
@@ -135,7 +131,7 @@ i18n = {
     "pl": "Za krótkie. To musi mieć conajmniej {argument} znaków."
 }
 
-Pipe.Condition.MinLength.ERROR_TEMPLATES[HandlerMode.ROOT] = lambda self: (
+Condition.MinLength.ERROR_TEMPLATES[HandlerMode.ROOT] = lambda self: (
     i18n.get(locale.get(), i18n["en"]).format(argument=self.argument)
 )
 
@@ -143,7 +139,7 @@ Pipe.Condition.MinLength.ERROR_TEMPLATES[HandlerMode.ROOT] = lambda self: (
 result_en = Pipe(
     value="invalid",
     type=str,
-    conditions={Pipe.Condition.MinLength: 100}
+    conditions={Condition.MinLength: 100}
 ).run()
 
 print(result_en.condition_errors)
@@ -154,7 +150,7 @@ locale.set("pl")
 result_pl = Pipe(
     value="invalid",
     type=str,
-    conditions={Pipe.Condition.MinLength: 100}
+    conditions={Condition.MinLength: 100}
 ).run()
 
 print(result_pl.condition_errors)
@@ -166,15 +162,14 @@ print(result_pl.condition_errors)
 ### Example 2: Context-Aware Error Messages
 
 ```python
-from pipeline import Pipe
-from pipeline.handlers import HandlerMode
+from pipeline import Pipe, HandlerMode, Condition
 
 # Customize to show both the value and the argument
-Pipe.Condition.MinNumber.ERROR_TEMPLATES[HandlerMode.ROOT] = lambda self: (
+Condition.MinNumber.ERROR_TEMPLATES[HandlerMode.ROOT] = lambda self: (
     f"Value {self.value} is below the minimum of {self.argument}."
 )
 
-Pipe.Condition.MaxNumber.ERROR_TEMPLATES[HandlerMode.ROOT] = lambda self: (
+Condition.MaxNumber.ERROR_TEMPLATES[HandlerMode.ROOT] = lambda self: (
     f"Value {self.value} exceeds the maximum of {self.argument}."
 )
 
@@ -182,8 +177,8 @@ result = Pipe(
     value=5,
     type=int,
     conditions={
-        Pipe.Condition.MinNumber: 10,
-        Pipe.Condition.MaxNumber: 100
+        Condition.MinNumber: 10,
+        Condition.MaxNumber: 100
     }
 ).run()
 
@@ -200,8 +195,7 @@ For complete control over the error structure, you can customize the `ERROR_BUIL
 ### Per-Handler Error Builder
 
 ```python
-from pipeline import Pipe
-from pipeline.handlers import HandlerMode
+from pipeline import Pipe, HandlerMode, Match
 
 def custom_email_error_builder(handler):
     """Custom error builder with detailed information"""
@@ -214,7 +208,7 @@ def custom_email_error_builder(handler):
     }
 
 # Assign the custom builder to a specific handler
-Pipe.Match.Format.Email.ERROR_BUILDER = custom_email_error_builder
+Match.Format.Email.ERROR_BUILDER = custom_email_error_builder
 ```
 
 ### Global Error Builder
@@ -222,7 +216,7 @@ Pipe.Match.Format.Email.ERROR_BUILDER = custom_email_error_builder
 You can also change the `ERROR_BUILDER` globally for all condition or match handlers:
 
 ```python
-from pipeline.handlers import ConditionHandler, MatchHandler
+from pipeline import ConditionHandler, MatchHandler
 
 def global_condition_error_builder(handler):
     """Global error builder for all condition handlers"""
@@ -252,7 +246,7 @@ MatchHandler.ERROR_BUILDER = global_match_error_builder
 
 !!! warning "Global vs Per-Handler"
 
-    When you set `ERROR_BUILDER` on a base class (like `ConditionHandler`), it affects **all** handlers that inherit from it. Setting it on a specific handler (like `Pipe.Match.Format.Email`) only affects that handler.
+    When you set `ERROR_BUILDER` on a base class (like `ConditionHandler`), it affects **all** handlers that inherit from it. Setting it on a specific handler (like `Match.Format.Email`) only affects that handler.
 
 ---
 
@@ -324,13 +318,13 @@ If you need to reset error messages to their defaults, you can reload the handle
 
 ```python
 # Save original before customizing
-original_template = Pipe.Match.Format.Email.ERROR_TEMPLATES.copy()
+original_template = Match.Format.Email.ERROR_TEMPLATES.copy()
 
 # Customize
-Pipe.Match.Format.Email.ERROR_TEMPLATES[HandlerMode.ROOT] = lambda _: "Custom message"
+Match.Format.Email.ERROR_TEMPLATES[HandlerMode.ROOT] = lambda _: "Custom message"
 
 # Restore later
-Pipe.Match.Format.Email.ERROR_TEMPLATES = original_template
+Match.Format.Email.ERROR_TEMPLATES = original_template
 ```
 
 ---

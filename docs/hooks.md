@@ -71,7 +71,7 @@ Krywok Pipeline offers **three flexible ways** to customize hooks, from global t
 Set hooks globally for **all instances** of the `Pipeline` class:
 
 ```python
-from pipeline import Pipeline, Pipe
+from pipeline import Pipeline, Pipe, Condition, Match
 
 # Define global hooks
 def global_pre_hook(hook):
@@ -92,11 +92,11 @@ Pipeline.global_post_hook = global_post_hook
 
 # Now ALL pipelines will use these hooks
 pipeline1 = Pipeline(
-    name={"type": str, "conditions": {Pipe.Condition.MaxLength: 10}}
+    name={"type": str, "conditions": {Condition.MaxLength: 10}}
 )
 
 pipeline2 = Pipeline(
-    email={"type": str, "matches": {Pipe.Match.Format.Email: None}}
+    email={"type": str, "matches": {Match.Format.Email: None}}
 )
 
 # Both pipelines will strip strings and log failures
@@ -111,18 +111,18 @@ pipeline2.run(data={"email": "invalid"})  # Logs failure
 Set hooks for a **specific pipeline instance**:
 
 ```python
-from pipeline import Pipeline, Pipe
+from pipeline import Pipeline, Pipe, Condition, Match
 
 # Create a pipeline
 user_pipeline = Pipeline(
     username={
         "type": str,
-        "conditions": {Pipe.Condition.MaxLength: 20}
+        "conditions": {Condition.MaxLength: 20}
     },
     password={
         "type": str,
         "matches": {
-            Pipe.Match.Format.Password: Pipe.Match.Format.Password.STRICT
+            Match.Format.Password: Match.Format.Password.STRICT
         },
         "metadata": {
             "sensitive": True
@@ -131,7 +131,7 @@ user_pipeline = Pipeline(
     email={
         "type": str,
         "matches": {
-            Pipe.Match.Format.Email: None
+            Match.Format.Email: None
         }
     }
 )
@@ -178,7 +178,7 @@ result = user_pipeline.run(data={
 Create a **custom Pipeline subclass** with built-in hook logic:
 
 ```python
-from pipeline import Pipeline, Pipe
+from pipeline import Pipeline, Pipe, Condition
 import logging
 
 class LoggingPipeline(Pipeline):
@@ -231,12 +231,12 @@ logging.basicConfig(level=logging.DEBUG)
 api_pipeline = LoggingPipeline(
     api_key={
         "type": str,
-        "conditions": {Pipe.Condition.MinLength: 32},
+        "conditions": {Condition.MinLength: 32},
         "metadata": {"redact_in_logs": True}
     },
     username={
         "type": str,
-        "conditions": {Pipe.Condition.MaxLength: 20}
+        "conditions": {Condition.MaxLength: 20}
     }
 )
 
@@ -260,7 +260,7 @@ result = api_pipeline.run(data={
 Combine inheritance with instance customization for maximum flexibility:
 
 ```python
-from pipeline import Pipeline, Pipe
+from pipeline import Pipeline, Pipe, Match
 from datetime import datetime
 
 class AuditPipeline(Pipeline):
@@ -305,12 +305,12 @@ class AuditPipeline(Pipeline):
 # Create tenant-specific pipelines
 tenant_a_pipeline = AuditPipeline(
     tenant_id="tenant_a",
-    email={"type": str, "matches": {Pipe.Match.Format.Email: None}}
+    email={"type": str, "matches": {Match.Format.Email: None}}
 )
 
 tenant_b_pipeline = AuditPipeline(
     tenant_id="tenant_b",
-    email={"type": str, "matches": {Pipe.Match.Format.Email: None}}
+    email={"type": str, "matches": {Match.Format.Email: None}}
 )
 
 # Process data

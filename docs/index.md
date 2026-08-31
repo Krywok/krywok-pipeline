@@ -90,7 +90,7 @@ flowchart TD
         value=123,  # Not a string!
         type=str,
         conditions={
-            Pipe.Condition.MinLength: 5  # Skipped because ValueType failed
+            Condition.MinLength: 5  # Skipped because ValueType failed
         }
     )
     ```
@@ -107,8 +107,8 @@ flowchart TD
     ```python
     # Both fields will be validated, even if 'email' fails
     Pipeline(
-        email={"type": str, "matches": {Pipe.Match.Format.Email: None}},
-        age={"type": int, "conditions": {Pipe.Condition.MinNumber: 18}}
+        email={"type": str, "matches": {Match.Format.Email: None}},
+        age={"type": int, "conditions": {Condition.MinNumber: 18}}
     ).run(data={
         "email": "invalid",  # Will fail
         "age": 16            # Will also be checked and fail
@@ -194,17 +194,17 @@ flowchart TD
 
     ```python
 
-    from pipeline import Pipe
+    from pipeline import Pipe, Condition, Match, Transform
 
     result = Pipe(
         value="john.smith@example.com",
         type=str,
-        conditions={Pipe.Condition.MaxLength: 64},
+        conditions={Condition.MaxLength: 64},
         matches={
-            Pipe.Match.Format.Email: None
+            Match.Format.Email: None
         },
         transform={
-            Pipe.Transform.Reverse: None
+            Transform.Reverse: None
         }
     ).run()
 
