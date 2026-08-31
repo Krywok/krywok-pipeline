@@ -7,14 +7,13 @@ from functools import cached_property
 from types import get_original_bases
 from typing import TYPE_CHECKING, Any, ClassVar, Generic, TypeVar, get_args
 
-from pipeline.handlers.base.resources.constants import (
-    Flag, HandlerExpectedType, HandlerMode
-)
+from pipeline.handlers.base.resources.constants import (Flag,
+                                                        HandlerExpectedType,
+                                                        HandlerMode)
 from pipeline.handlers.base.resources.exceptions import (
     HandlerException, HandlerInvalidArgumentType,
     HandlerInvalidPreferredValueType, HandlerInvalidValueType,
-    HandlerModeMissingContextValue, HandlerModeUnsupported
-)
+    HandlerModeMissingContextValue, HandlerModeUnsupported)
 
 if TYPE_CHECKING:
     from pipeline.pipe.resources.types import PipeContext, PipeMetadata

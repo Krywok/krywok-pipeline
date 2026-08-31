@@ -4,9 +4,9 @@ from pipeline.handlers.condition.registry import Condition
 from pipeline.handlers.condition.resources.constants import ConditionFlag
 from pipeline.handlers.condition.resources.types import ConditionErrors
 from pipeline.pipe.resources.constants import PipeResult
-from pipeline.pipe.resources.types import (
-    PipeConditions, PipeContext, PipeMatches, PipeMetadata, PipeTransform
-)
+from pipeline.pipe.resources.types import (PipeConditions, PipeContext,
+                                           PipeMatches, PipeMetadata,
+                                           PipeTransform)
 
 V = TypeVar("V")
 T = TypeVar("T", bound=type)

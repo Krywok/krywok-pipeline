@@ -12,8 +12,7 @@ from pipeline.handlers.condition.resources.exceptions import \
 
 if TYPE_CHECKING:
     from pipeline.handlers.condition.resources.types import (
-        ConditionError, ConditionErrorTemplates
-    )
+        ConditionError, ConditionErrorTemplates)
     from pipeline.pipe.resources.types import PipeContext, PipeMetadata
 
 

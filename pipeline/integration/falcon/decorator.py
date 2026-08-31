@@ -19,9 +19,9 @@ except ImportError:
     )
 
 from pipeline.pipeline.cls import Pipeline
-from pipeline.pipeline.resources.types import (
-    PipelineHandleErrorsFunc, PipelineHookFunc, PipelineTeardownFunc
-)
+from pipeline.pipeline.resources.types import (PipelineHandleErrorsFunc,
+                                               PipelineHookFunc,
+                                               PipelineTeardownFunc)
 
 
 class PipelineFalcon(Pipeline):
