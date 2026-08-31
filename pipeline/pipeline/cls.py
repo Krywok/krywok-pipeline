@@ -6,9 +6,7 @@ from pipeline.handlers.condition.resources.types import (
     ConditionError, ConditionErrors
 )
 from pipeline.pipe.resources.types import PipeConfig, PipeContext
-from pipeline.pipeline.resources.constants import (
-    PipelineHook, PipelineHookValue, PipelineResult
-)
+from pipeline.pipeline.resources.constants import PipelineHook, PipelineResult
 from pipeline.pipeline.resources.exceptions import PipelineException
 from pipeline.pipeline.resources.types import (
     PipelineHandleErrorsFunc, PipelineHookFunc, PipelineTeardownFunc
@@ -172,16 +170,11 @@ class Pipeline:
         value: Any = data.get(field, None)
 
         hook: PipelineHook | None = PipelineHook(
-            field=field,
-            value=PipelineHookValue(value),
-            is_valid=None,
-            pipe_config=pipe_config
+            field=field, value=value, is_valid=None, pipe_config=pipe_config
         ) if self.pre_hook or self.post_hook else None
 
         if hook and self.pre_hook:
-            self.pre_hook(hook)
-
-            value = hook.value.get
+            value = self.pre_hook(hook)
 
         if isinstance(value, dict):
             context = value
@@ -196,14 +189,12 @@ class Pipeline:
             self._errors[field] = errors
 
         if hook:
-            hook.value.set(value)
+            hook.value = value
 
             hook.is_valid = not errors
 
             if self.post_hook:
-                self.post_hook(hook)
-
-                value = hook.value.get
+                value = self.post_hook(hook)
 
         self._processed_data[field] = value
 

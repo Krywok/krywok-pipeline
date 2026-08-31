@@ -5,6 +5,6 @@ from pipeline.handlers.condition.resources.types import ConditionErrors
 from pipeline.pipeline.resources.constants import PipelineHook
 
 PipelineErrors = dict[str, ConditionErrors]
-PipelineHookFunc = Callable[[PipelineHook], None]
+PipelineHookFunc = Callable[[PipelineHook], Any]
 PipelineTeardownFunc = Callable[[Any], None]
 PipelineHandleErrorsFunc = Callable[[PipelineErrors], None]

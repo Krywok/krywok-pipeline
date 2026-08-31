@@ -12,27 +12,11 @@ if TYPE_CHECKING:
 class PipelineHook:
     field: Any
 
-    value: PipelineHookValue
+    value: Any
 
     is_valid: bool | None
 
     pipe_config: PipeConfig
-
-
-class PipelineHookValue:
-    __slots__ = ("value", )
-
-    def __init__(self, value: Any) -> None:
-        self.value = value
-
-    @property
-    def get(self) -> Any:
-        return self.value
-
-    def set(self, new_value: Any) -> Any:
-        self.value = new_value
-
-        return self.value
 
 
 class PipelineResult(NamedTuple):
