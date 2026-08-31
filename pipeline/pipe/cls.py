@@ -1,10 +1,8 @@
-from typing import ClassVar, Generic, TypeVar
+from typing import Generic, TypeVar
 
 from pipeline.handlers.condition.registry import Condition
 from pipeline.handlers.condition.resources.constants import ConditionFlag
 from pipeline.handlers.condition.resources.types import ConditionErrors
-from pipeline.handlers.match.registry import Match
-from pipeline.handlers.transform.registry import Transform
 from pipeline.pipe.resources.constants import PipeResult
 from pipeline.pipe.resources.types import (
     PipeConditions, PipeContext, PipeMatches, PipeMetadata, PipeTransform
@@ -28,16 +26,7 @@ class Pipe(Generic[V, T]):
     5. Matches: Only if no condition errors occurred, match handlers are executed. These are typically
        regex-based checks.
     6. Transform: Only if no match errors occurred, transform handlers are executed to modify the value.
-
-    Attributes:
-        Condition (Type[Condition]): The condition handler class registry.
-        Match (Type[Match]): The match handler class registry.
-        Transform (Type[Transform]): The transform handler class registry.
     """
-    Condition: ClassVar = Condition
-    Match: ClassVar = Match
-    Transform: ClassVar = Transform
-
     def __init__(
         self,
         value: V,
@@ -168,7 +157,7 @@ class Pipe(Generic[V, T]):
         Returns:
             bool: True if the value type is correct, False otherwise.
         """
-        if (error := self.Condition.ValueType(self.value, self.type).handle()):
+        if (error := Condition.ValueType(self.value, self.type).handle()):
             self._condition_errors.append(error)
 
         return not error
