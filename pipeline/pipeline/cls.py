@@ -145,19 +145,17 @@ class Pipeline:
 
         The execution flow is as follows:
         1. Value extraction: Retrieves the initial value from the input data.
-        2. Hook preparation: Defines a closure-based Value class using nonlocal 
-           to allow hooks to get or set the variable directly in the local scope.
-        3. Pre-hook execution: Runs the local pre_hook if defined. Otherwise, 
+        2. Pre-hook execution: Runs the local pre_hook if defined. Otherwise, 
            falls back to the Pipeline.global_pre_hook.
-        4. Context Management: If the current value is a dictionary, it overrides 
+        3. Context Management: If the current value is a dictionary, it overrides 
            the context for the downstream pipe execution.
-        5. Pipe execution: Initializes and runs a Pipe instance to handle 
+        4. Pipe execution: Initializes and runs a Pipe instance to handle 
            validation, matching, and transformation.
-        6. Error handling: Checks for condition_errors or match_errors. If found, 
+        5. Error handling: Checks for condition_errors or match_errors. If found, 
            the field is marked invalid and errors are stored in self._errors.
-        7. Post-Hook Execution: Updates the hook's is_valid state and executes 
+        6. Post-Hook Execution: Updates the hook's is_valid state and executes 
            the local or global post-hook.
-        8. Data Persistence: Saves the final value to self._processed_data.
+        7. Data Persistence: Saves the final value to self._processed_data.
 
         Args:
             data: The source dictionary containing the field value.
