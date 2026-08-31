@@ -6,10 +6,10 @@ from collections.abc import Callable, Iterable
 from functools import cached_property
 from typing import TYPE_CHECKING, Any, ClassVar, Generic, TypeVar, get_args
 
-from pipeline.handler.base.resources.constants import (
+from pipeline.handlers.base.resources.constants import (
     Flag, HandlerExpectedTypes, HandlerMode
 )
-from pipeline.handler.base.resources.exceptions import (
+from pipeline.handlers.base.resources.exceptions import (
     HandlerException, HandlerInvalidArgumentType,
     HandlerInvalidPreferredValueType, HandlerInvalidValueType,
     HandlerModeMissingContextValue, HandlerModeUnsupported

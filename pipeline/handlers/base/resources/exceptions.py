@@ -2,10 +2,10 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from pipeline.handler.base.resources.constants import HandlerMode
+from pipeline.handlers.base.resources.constants import HandlerMode
 
 if TYPE_CHECKING:
-    from pipeline.handler.base.cls import BaseHandler
+    from pipeline.handlers.base.cls import BaseHandler
 
 
 class HandlerException(Exception):

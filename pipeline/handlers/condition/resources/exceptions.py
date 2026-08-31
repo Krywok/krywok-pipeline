@@ -1,4 +1,4 @@
-from pipeline.handler.base.resources.exceptions import HandlerException
+from pipeline.handlers.base.resources.exceptions import HandlerException
 
 
 class ConditionException(HandlerException):

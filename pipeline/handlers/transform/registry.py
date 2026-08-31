@@ -2,8 +2,8 @@ import re
 from collections.abc import Callable
 from typing import Any
 
-from pipeline.handler.base.resources.constants import HandlerMode
-from pipeline.handler.transform.cls import TransformHandler
+from pipeline.handlers.base.resources.constants import HandlerMode
+from pipeline.handlers.transform.cls import TransformHandler
 
 
 class Transform:

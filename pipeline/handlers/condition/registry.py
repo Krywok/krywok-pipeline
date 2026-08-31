@@ -3,8 +3,8 @@ from __future__ import annotations
 from collections.abc import Iterable
 from typing import Any
 
-from pipeline.handler.base.resources.constants import HandlerMode
-from pipeline.handler.condition.resources.constants import ConditionFlag
+from pipeline.handlers.base.resources.constants import HandlerMode
+from pipeline.handlers.condition.resources.constants import ConditionFlag
 from pipeline.pipeline.cls import Pipeline
 
 from ...handler.condition.cls import ConditionHandler

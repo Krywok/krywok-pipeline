@@ -3,8 +3,8 @@ from __future__ import annotations
 from functools import partial
 from typing import TypeVar
 
-from pipeline.handler.base.cls import BaseHandler
-from pipeline.handler.base.resources.constants import HandlerMode
+from pipeline.handlers.base.cls import BaseHandler
+from pipeline.handlers.base.resources.constants import HandlerMode
 
 T = TypeVar('T', bound=BaseHandler)
 

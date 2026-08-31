@@ -2,9 +2,9 @@ from __future__ import annotations
 
 import re
 
-from pipeline.handler.base.resources.constants import HandlerMode
-from pipeline.handler.base.resources.exceptions import HandlerException
-from pipeline.handler.match.cls import MatchHandler
+from pipeline.handlers.base.resources.constants import HandlerMode
+from pipeline.handlers.base.resources.exceptions import HandlerException
+from pipeline.handlers.match.cls import MatchHandler
 
 
 class MatchFormat:

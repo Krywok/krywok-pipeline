@@ -1,9 +1,9 @@
 import re
 from typing import Literal
 
-from pipeline.handler.base.cls import A, V
-from pipeline.handler.condition.cls import ConditionHandler
-from pipeline.handler.match.units.resources.constants import ISO_639_1
+from pipeline.handlers.base.cls import A, V
+from pipeline.handlers.condition.cls import ConditionHandler
+from pipeline.handlers.match.units.resources.constants import ISO_639_1
 
 
 class MatchHandler(ConditionHandler[V, A]):

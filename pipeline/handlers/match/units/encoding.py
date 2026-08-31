@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import json
 
-from pipeline.handler.base.resources.constants import HandlerMode
-from pipeline.handler.match.cls import MatchHandler
+from pipeline.handlers.base.resources.constants import HandlerMode
+from pipeline.handlers.match.cls import MatchHandler
 
 
 class MatchEncoding:

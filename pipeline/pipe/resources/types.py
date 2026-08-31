@@ -3,9 +3,9 @@ from __future__ import annotations
 from functools import partial
 from typing import Any, NotRequired, TypedDict
 
-from pipeline.handler.condition.cls import ConditionHandler
-from pipeline.handler.match.cls import MatchHandler
-from pipeline.handler.transform.cls import TransformHandler
+from pipeline.handlers.condition.cls import ConditionHandler
+from pipeline.handlers.match.cls import MatchHandler
+from pipeline.handlers.transform.cls import TransformHandler
 
 PipeConditions = dict[type[ConditionHandler] | partial[ConditionHandler], Any]
 PipeMatches = dict[type[MatchHandler] | partial[MatchHandler], Any]

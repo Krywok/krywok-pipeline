@@ -2,9 +2,9 @@ from __future__ import annotations
 
 from zoneinfo import available_timezones
 
-from pipeline.handler.base.resources.constants import HandlerMode
-from pipeline.handler.match.cls import MatchHandler
-from pipeline.handler.match.units.resources.constants import (
+from pipeline.handlers.base.resources.constants import HandlerMode
+from pipeline.handlers.match.cls import MatchHandler
+from pipeline.handlers.match.units.resources.constants import (
     ISO_639_1, ISO_3166, ISO_4217
 )
 

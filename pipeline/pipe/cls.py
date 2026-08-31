@@ -1,10 +1,10 @@
 from typing import ClassVar, Generic, TypeVar
 
-from pipeline.handler.condition.registry import Condition
-from pipeline.handler.condition.resources.constants import ConditionFlag
-from pipeline.handler.condition.resources.types import ConditionErrors
-from pipeline.handler.match.registry import Match
-from pipeline.handler.transform.registry import Transform
+from pipeline.handlers.condition.registry import Condition
+from pipeline.handlers.condition.resources.constants import ConditionFlag
+from pipeline.handlers.condition.resources.types import ConditionErrors
+from pipeline.handlers.match.registry import Match
+from pipeline.handlers.transform.registry import Transform
 from pipeline.pipe.resources.constants import PipeResult
 from pipeline.pipe.resources.types import (
     PipeConditions, PipeContext, PipeMatches, PipeMetadata, PipeTransform

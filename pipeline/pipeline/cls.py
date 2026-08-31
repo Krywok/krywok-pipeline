@@ -2,7 +2,7 @@ from collections.abc import Callable
 from functools import wraps
 from typing import Any, ClassVar, ParamSpec, TypeVar
 
-from pipeline.handler.condition.resources.types import ConditionErrors
+from pipeline.handlers.condition.resources.types import ConditionErrors
 from pipeline.pipe.resources.types import PipeConfig, PipeContext
 from pipeline.pipeline.resources.constants import PipelineHook, PipelineResult
 from pipeline.pipeline.resources.exceptions import PipelineException

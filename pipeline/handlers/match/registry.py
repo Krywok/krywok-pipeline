@@ -2,14 +2,14 @@ from __future__ import annotations
 
 from typing import ClassVar
 
-from pipeline.handler.match.units.encoding import MatchEncoding
-from pipeline.handler.match.units.format import MatchFormat
-from pipeline.handler.match.units.localization import MatchLocalization
-from pipeline.handler.match.units.network import MatchNetwork
-from pipeline.handler.match.units.regex import MatchRegex
-from pipeline.handler.match.units.text import MatchText
-from pipeline.handler.match.units.time import MatchTime
-from pipeline.handler.match.units.web import MatchWeb
+from pipeline.handlers.match.units.encoding import MatchEncoding
+from pipeline.handlers.match.units.format import MatchFormat
+from pipeline.handlers.match.units.localization import MatchLocalization
+from pipeline.handlers.match.units.network import MatchNetwork
+from pipeline.handlers.match.units.regex import MatchRegex
+from pipeline.handlers.match.units.text import MatchText
+from pipeline.handlers.match.units.time import MatchTime
+from pipeline.handlers.match.units.web import MatchWeb
 
 
 class Match:

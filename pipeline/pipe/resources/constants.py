@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Any, NamedTuple
 
-from pipeline.handler.condition.resources.types import ConditionErrors
+from pipeline.handlers.condition.resources.types import ConditionErrors
 
 
 class PipeResult(NamedTuple):

@@ -1,9 +1,9 @@
 from typing import Literal, Unpack
 
 from pipeline.battery.unit import BatteryUnit
-from pipeline.handler.condition.registry import Condition
-from pipeline.handler.match.registry import Match
-from pipeline.handler.transform.registry import Transform
+from pipeline.handlers.condition.registry import Condition
+from pipeline.handlers.match.registry import Match
+from pipeline.handlers.transform.registry import Transform
 from pipeline.pipe.resources.types import PipeConfig
 
 

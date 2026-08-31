@@ -3,8 +3,8 @@ from __future__ import annotations
 from abc import abstractmethod
 from typing import cast
 
-from pipeline.handler.base.cls import A, BaseHandler, V
-from pipeline.handler.base.resources.exceptions import HandlerModeException
+from pipeline.handlers.base.cls import A, BaseHandler, V
+from pipeline.handlers.base.resources.exceptions import HandlerModeException
 
 
 class TransformHandler(BaseHandler[V, A]):

@@ -4,14 +4,14 @@ from abc import abstractmethod
 from collections.abc import Callable
 from typing import TYPE_CHECKING, Any, ClassVar, cast
 
-from pipeline.handler.base.cls import A, BaseHandler, V
-from pipeline.handler.base.resources.constants import HandlerMode
-from pipeline.handler.base.resources.exceptions import HandlerModeException
-from pipeline.handler.condition.resources.exceptions import \
+from pipeline.handlers.base.cls import A, BaseHandler, V
+from pipeline.handlers.base.resources.constants import HandlerMode
+from pipeline.handlers.base.resources.exceptions import HandlerModeException
+from pipeline.handlers.condition.resources.exceptions import \
     ConditionMissingRootErrorMsg
 
 if TYPE_CHECKING:
-    from pipeline.handler.condition.resources.types import (
+    from pipeline.handlers.condition.resources.types import (
         ConditionError, ConditionErrorTemplates
     )
     from pipeline.pipe.resources.types import PipeContext, PipeMetadata
