@@ -2,9 +2,13 @@ from collections.abc import Callable
 from functools import wraps
 from typing import Any, ClassVar, ParamSpec, TypeVar
 
-from pipeline.handlers.condition.resources.types import ConditionErrors
+from pipeline.handlers.condition.resources.types import (
+    ConditionError, ConditionErrors
+)
 from pipeline.pipe.resources.types import PipeConfig, PipeContext
-from pipeline.pipeline.resources.constants import PipelineHook, PipelineResult
+from pipeline.pipeline.resources.constants import (
+    PipelineHook, PipelineHookValue, PipelineResult
+)
 from pipeline.pipeline.resources.exceptions import PipelineException
 from pipeline.pipeline.resources.types import (
     PipelineHandleErrorsFunc, PipelineHookFunc, PipelineTeardownFunc
@@ -77,12 +81,12 @@ class Pipeline:
                 Keys represent the fields in the data dictionary to be processed,
                 and values are the configuration for the corresponding pipe.
         """
-        self.pre_hook: PipelineHookFunc | None = pre_hook
-        self.post_hook: PipelineHookFunc | None = post_hook
+        self.pre_hook: PipelineHookFunc | None = pre_hook or self.__class__.global_pre_hook
+        self.post_hook: PipelineHookFunc | None = post_hook or self.__class__.global_post_hook
 
-        self.handle_errors: PipelineHandleErrorsFunc | None = handle_errors
+        self.teardown: PipelineTeardownFunc | None = teardown or self.__class__.global_teardown
 
-        self.teardown: PipelineTeardownFunc | None = teardown
+        self.handle_errors: PipelineHandleErrorsFunc | None = handle_errors or self.__class__.global_handle_errors
 
         self.pipes_config: dict[str, PipeConfig] = pipes_config
 
@@ -118,26 +122,16 @@ class Pipeline:
 
         self._ran_before = True
 
-        context: PipeContext = data
-
         for field, pipe_config in self.pipes_config.items():
             self._process_field_pipe(
-                data=data,
-                context=context,
-                field=field,
-                pipe_config=pipe_config
+                data=data, context=data, field=field, pipe_config=pipe_config
             )
 
         if self.teardown:
             self.teardown(self)
-        elif self.__class__.global_teardown:
-            self.__class__.global_teardown(self)
 
-        if self._errors:
-            error_handler = self.handle_errors or self.__class__.global_handle_errors
-
-            if error_handler:
-                error_handler(self._errors)
+        if self._errors and self.handle_errors:
+            self.handle_errors(self._errors)
 
         return PipelineResult(
             errors=self._errors or None,
@@ -177,28 +171,17 @@ class Pipeline:
 
         value: Any = data.get(field, None)
 
-        class Value:
-            @property
-            def get(self) -> Any:
-                nonlocal value
+        hook: PipelineHook | None = PipelineHook(
+            field=field,
+            value=PipelineHookValue(value),
+            is_valid=None,
+            pipe_config=pipe_config
+        ) if self.pre_hook or self.post_hook else None
 
-                return value
-
-            def set(self, new_value: Any) -> Any:
-                nonlocal value
-
-                value = new_value
-
-                return self.get
-
-        hook = PipelineHook(
-            field=field, value=Value(), is_valid=None, pipe_config=pipe_config
-        )
-
-        if self.pre_hook:
+        if hook and self.pre_hook:
             self.pre_hook(hook)
-        elif self.__class__.global_pre_hook:
-            self.__class__.global_pre_hook(hook)
+
+            value = hook.value.get
 
         if isinstance(value, dict):
             context = value
@@ -207,17 +190,20 @@ class Pipeline:
 
         value, condition_errors, match_errors = pipe.run()
 
-        is_valid: bool = not bool(condition_errors or match_errors)
+        errors: list[ConditionError] = condition_errors + match_errors
 
-        if not is_valid:
-            self._errors[field] = [*condition_errors, *match_errors]
+        if errors:
+            self._errors[field] = errors
 
-        hook.is_valid = is_valid
+        if hook:
+            hook.value.set(value)
 
-        if self.post_hook:
-            self.post_hook(hook)
-        elif self.__class__.global_post_hook:
-            self.__class__.global_post_hook(hook)
+            hook.is_valid = not errors
+
+            if self.post_hook:
+                self.post_hook(hook)
+
+                value = hook.value.get
 
         self._processed_data[field] = value
 
