@@ -177,7 +177,7 @@ flowchart TD
 ### Hook Priority
 
 - **Instance hooks** (defined on pipeline instance) take precedence over **global hooks** (defined on Pipeline class)
-- Hooks can modify values using `hook.value.set(new_value)`
+- Hooks can modify values using `hook.value = new_value`
 - Post-hooks have access to validation status via `hook.is_valid`
 
 ---

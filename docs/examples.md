@@ -197,10 +197,8 @@ user_pipeline = Pipeline(
 
 # Attach a pre-hook to strip whitespace from all strings
 def sanitize_strings(hook):
-    current_value = hook.value.get
-
-    if isinstance(current_value, str):
-        hook.value.set(current_value.strip())
+    if isinstance(hook.value, str):
+        hook.value = hook.value.strip()
 
 user_pipeline.pre_hook = sanitize_strings
 
@@ -243,8 +241,7 @@ def log_with_redaction(hook):
     if metadata.get('sensitive'):
         print(f"[{status}] Field '{hook.field}': [REDACTED]")
     else:
-        current_value = hook.value.get
-        print(f"[{status}] Field '{hook.field}': {current_value}")
+        print(f"[{status}] Field '{hook.field}': {hook.value}")
 
 auth_pipeline.post_hook = log_with_redaction
 
@@ -489,10 +486,8 @@ order_pipeline = Pipeline(
 # Add hooks for business logic
 def validate_total(hook):
     """Ensure total amount is reasonable"""
-    current_value = hook.value.get
-
-    if hook.field == "total_amount" and current_value > 5000:
-        print(f"[!] Large order detected: ${current_value}")
+    if hook.field == "total_amount" and hook.value > 5000:
+        print(f"[!] Large order detected: ${hook.value}")
 
 # You can also pass a post_hook in __init__
 order_pipeline.post_hook = validate_total

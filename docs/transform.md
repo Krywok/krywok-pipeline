@@ -97,13 +97,12 @@ user_pipeline = Pipeline(
 
 # Add custom transformation via pre_hook
 def custom_transform(hook):
-    current_value = hook.value.get
     if hook.field == "name":
         # Custom logic: Title case
-        hook.value.set(current_value.title())
+        hook.value = hook.value.title()
     elif hook.field == "email":
         # Custom logic: Lowercase and strip
-        hook.value.set(current_value.lower().strip())
+        hook.value = hook.value.lower().strip()
 
 user_pipeline.pre_hook = custom_transform
 

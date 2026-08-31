@@ -172,7 +172,9 @@ class Pipeline:
         ) if self.pre_hook or self.post_hook else None
 
         if hook and self.pre_hook:
-            value = self.pre_hook(hook)
+            self.pre_hook(hook)
+
+            value = hook.value
 
         if isinstance(value, dict):
             context = value
@@ -192,7 +194,9 @@ class Pipeline:
             hook.is_valid = not errors
 
             if self.post_hook:
-                value = self.post_hook(hook)
+                self.post_hook(hook)
+
+                value = hook.value
 
         self._processed_data[field] = value
 
