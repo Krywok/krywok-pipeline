@@ -1,0 +1,8 @@
+Runtime: Python 3.13.5 on macOS-26.6.2-arm64-arm-64bit-Mach-O (Apple M3)
+Iterations: 250000
+Mean time: 0.0206 ms
+Median time: 0.0206 ms
+Minimum time (Min): 0.0197 ms
+Maximum time (Max): 0.1580 ms
+Standard deviation (StDev): 0.0006 ms
+Throughput: 48478.16 operations/second
